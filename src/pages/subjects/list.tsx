@@ -5,17 +5,44 @@ import { ListView } from '@/components/refine-ui/views/list-view'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { DEPARTMENT_OPTIONS } from '@/constants'
-import { Subject } from '@/types'
+import { BACKEND_BASE_URL } from '@/constants'
+import { Department, Subject } from '@/types'
 import { useTable } from '@refinedev/react-table'
 import { ColumnDef } from '@tanstack/react-table'
 import { Search } from 'lucide-react'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 const SubjectList = () => {
 
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedDepartment, setSelectedDepartment] = useState("all")
+  const [departments, setDepartments] = useState<Department[]>([])
+  const [loadingDepartments, setLoadingDepartments] = useState(true)
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        setLoadingDepartments(true)
+        // Ensure proper URL construction - handle trailing slash
+        const baseUrl = BACKEND_BASE_URL.endsWith('/') 
+          ? BACKEND_BASE_URL.slice(0, -1) 
+          : BACKEND_BASE_URL
+        const url = `${baseUrl}/departments`
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error('Failed to fetch departments')
+        }
+        const result = await response.json()
+        setDepartments(result.data || [])
+      } catch (error) {
+        console.error('Error fetching departments:', error)
+      } finally {
+        setLoadingDepartments(false)
+      }
+    }
+
+    fetchDepartments()
+  }, [])
 
   const departmentFilters = selectedDepartment === "all" ? [] : [
     {
@@ -118,12 +145,12 @@ const SubjectList = () => {
 
               <SelectContent>
                 <SelectItem value="all">All Departments</SelectItem>
-                {DEPARTMENT_OPTIONS.map(department => (
+                {!loadingDepartments && departments.map(department => (
                   <SelectItem 
-                    key={department.value} 
-                    value={department.value}
+                    key={department.id} 
+                    value={department.name}
                   >
-                    {department.label}
+                    {department.name}
                   </SelectItem>
                 ))}
               </SelectContent>
