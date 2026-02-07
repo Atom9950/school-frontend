@@ -96,11 +96,11 @@ const TeacherList = () => {
         cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>()}</span>,
       },
       {
-        id: 'role',
-        accessorKey: 'role',
-        size: 120,
-        header: () => <p className='column-title'>Role</p>,
-        cell: ({ getValue}) => <Badge>{getValue<string>()}</Badge>,
+        id: 'phoneNumber',
+        accessorKey: 'phoneNumber',
+        size: 150,
+        header: () => <p className='column-title'>Phone Number</p>,
+        cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>() || 'N/A'}</span>,
       },
       {
         id: 'actions',
