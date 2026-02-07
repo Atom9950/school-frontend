@@ -77,6 +77,7 @@ export type User = {
     updatedAt: string;
     email: string;
     name: string;
+    bio?: string;
     role: UserRole;
     image?: string;
     imageCldPubId?: string;
