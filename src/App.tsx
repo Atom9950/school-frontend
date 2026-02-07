@@ -44,7 +44,7 @@ function App() {
                   list: '/',
                   meta: 
                   {
-                    label: 'home', 
+                    label: 'Home', 
                     icon: <Home/>
                   }
                 },
