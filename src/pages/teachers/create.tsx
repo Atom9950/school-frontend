@@ -44,6 +44,7 @@ const Create = () => {
             bannerUrl: "",
             bannerCldPubId: "",
             bio: "",
+            phoneNumber: "",
             allocatedClasses: [],
             allocatedDepartments: [],
         },
@@ -74,6 +75,7 @@ const Create = () => {
                     bannerUrl: values.bannerUrl,
                     bannerCldPubId: values.bannerCldPubId,
                     bio: values.bio,
+                    phoneNumber: values.phoneNumber,
                     allocatedDepartments: values.allocatedDepartments,
                     allocatedClasses: values.allocatedClasses,
                     role: "teacher"
@@ -225,6 +227,25 @@ const Create = () => {
                                             <FormControl className='border-2 border-primary rounded-md p-2'>
                                                 <Input
                                                     placeholder="123 Main Street"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={control}
+                                    name="phoneNumber"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Mobile Number <span className="text-orange-600">*</span>
+                                            </FormLabel>
+                                            <FormControl className='border-2 border-primary rounded-md p-2'>
+                                                <Input
+                                                    placeholder="+1 (555) 123-4567"
                                                     {...field}
                                                 />
                                             </FormControl>

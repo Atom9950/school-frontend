@@ -26,7 +26,7 @@ const TeacherShow = () => {
     )
   }
 
-  const { name, email, role, department, image, address, age, gender, joiningDate, bio, classes, departments } = teacher
+  const { name, email, role, department, image, address, age, gender, joiningDate, bio, phoneNumber, classes, departments } = teacher
   const teacherInitials = name.split(' ').filter(Boolean).slice(0, 2).map((part) => part[0].toLocaleUpperCase()).join('')
   const placeholderUrl = `https://placehold.co/600x400?text=${encodeURIComponent(teacherInitials || "NA")}`
 
@@ -49,12 +49,13 @@ const TeacherShow = () => {
           </div>
         </div>
 
-        <div className='details-grid'>
+        <div className='details-grid grid-cols-3'>
           <div className='instructor'>
             <p>Contact Information</p>
             <div>
               <div>
-                <p>{email}</p>
+                <p className='text-lg'>{email}</p>
+                <p className='text-lg font-bold text-muted-foreground'>{phoneNumber ? phoneNumber : 'No mobile number provided'}</p>
               </div>
             </div>
           </div>
@@ -63,11 +64,29 @@ const TeacherShow = () => {
             <p>Personal Information</p>
 
             <div>
-              <p>{gender ? `${gender}` : 'N/A'}</p>
-              <p>{age ? `Age: ${age}` : 'Age not provided'}</p>
+              <p className='text-lg'>{gender ? `${gender}`.slice(0, 1).toUpperCase() + `${gender}`.slice(1) : 'N/A'}</p>
+              <p className='text-lg font-bold'>{age ? `Age: ${age}` : 'Age not provided'}</p>
             </div>
           </div>
+
+          <div className='subject'>
+          <p>Joining Date</p>
+
+          <div>
+            <p className='text-lg'>{joiningDate ? new Date(joiningDate).toLocaleDateString() : 'Not specified'}</p>
+          </div>
         </div>
+        </div>
+
+        <Separator />
+
+            <div className='subject'>
+              <p>Bio</p>
+
+              <div>
+                <p>{bio || 'No bio provided'}</p>
+              </div>
+            </div>
 
         <Separator />
 
@@ -80,24 +99,6 @@ const TeacherShow = () => {
         </div>
 
         <Separator />
-
-        <div className='subject'>
-          <p>Bio</p>
-
-          <div>
-            <p>{bio || 'No bio provided'}</p>
-          </div>
-        </div>
-
-        <Separator />
-
-        <div className='subject'>
-          <p>Joining Date</p>
-
-          <div>
-            <p>{joiningDate ? new Date(joiningDate).toLocaleDateString() : 'Not specified'}</p>
-          </div>
-        </div>
 
         {departments && departments.length > 0 && (
           <>

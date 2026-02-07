@@ -79,6 +79,7 @@ export type User = {
     name: string;
     bio?: string;
     role: UserRole;
+    phoneNumber?: string;
     image?: string;
     imageCldPubId?: string;
     department?: string;
