@@ -13,7 +13,7 @@ import { useNotificationProvider } from "./components/refine-ui/notification/use
 import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
 import { dataProvider } from "./providers/data";
 import Dashboard from "./pages/dashboard";
-import { BookOpen, GraduationCap, Home, Building2 } from "lucide-react";
+import { BookOpen, GraduationCap, Home, Building2, Users } from "lucide-react";
 import { Layout } from "./components/refine-ui/layout/layout";
 import SubjectList from "./pages/subjects/list";
 import SubjectCreate from "./pages/subjects/create";
@@ -23,6 +23,9 @@ import ClassesShow from "./pages/classes/show";
 import DepartmentsList from "./pages/departments/list";
 import DepartmentCreate from "./pages/departments/create";
 import DepartmentShow from "./pages/departments/show";
+import TeacherList from "./pages/teachers/list";
+import TeacherShow from "./pages/teachers/show";
+import TeacherCreate from "./pages/teachers/create";
 
 
 function App() {
@@ -65,13 +68,20 @@ function App() {
                   meta: { label: 'Subjects', icon: <BookOpen /> }
                 },
                 {
-                  name: 'classes',
-                  list: '/classes',
-                  create: '/classes/create',
-                  show: '/classes/show/:id',
-                  meta: { label: 'Classes', icon: <GraduationCap /> }
-                }
-              ]}
+                   name: 'classes',
+                   list: '/classes',
+                   create: '/classes/create',
+                   show: '/classes/show/:id',
+                   meta: { label: 'Classes', icon: <GraduationCap /> }
+                 },
+                {
+                   name: 'teachers',
+                   list: '/teachers',
+                   create: '/teachers/create',
+                   show: '/teachers/show/:id',
+                   meta: { label: 'Teachers', icon: <Users /> }
+                 }
+                ]}
             >
               <Routes>
                 <Route element=
@@ -91,11 +101,16 @@ function App() {
                   <Route path="create" element={<SubjectCreate />} />
                 </Route>
                 <Route path="classes">
-                  <Route index element={<ClassesList />} />
-                  <Route path="create" element={<ClassesCreate />} />
-                  <Route path="show/:id" element={<ClassesShow />} /> {/* Placeholder for class details page */}
-                </Route>
-                </Route>
+                   <Route index element={<ClassesList />} />
+                   <Route path="create" element={<ClassesCreate />} />
+                   <Route path="show/:id" element={<ClassesShow />} /> {/* Placeholder for class details page */}
+                 </Route>
+                 <Route path="teachers">
+                   <Route index element={<TeacherList />} />
+                   <Route path="create" element={<TeacherCreate />} />
+                   <Route path="show/:id" element={<TeacherShow />} />
+                 </Route>
+                 </Route>
               </Routes>
               <Toaster />
               <RefineKbar />

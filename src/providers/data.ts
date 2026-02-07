@@ -27,7 +27,10 @@ const buildHttpError = async (response: Response): Promise<HttpError> => {
 
 const options: CreateDataProviderOptions = {
   getList: {
-    getEndpoint: ({ resource }) => resource,
+    getEndpoint: ({ resource }) => {
+      if (resource === 'teachers') return 'users';
+      return resource;
+    },
     buildQueryParams: async ({ filters, resource, pagination }) => {
       const page = pagination?.currentPage ?? 1;
       const pageSize = pagination?.pageSize ?? 10;
@@ -75,8 +78,23 @@ const options: CreateDataProviderOptions = {
   },
 
   create: {
-    getEndpoint: ({ resource }) => resource,
-    buildBodyParams: async({ variables }) => variables,
+    getEndpoint: ({ resource }) => {
+      if (resource === 'teachers') return 'users';
+      return resource;
+    },
+    buildBodyParams: async({ variables, resource }) => {
+      // Map bannerUrl to image for teachers/users resource
+      if ((resource === 'users' || resource === 'teachers') && 'bannerUrl' in variables) {
+        const { bannerUrl, bannerCldPubId, address, age, gender, joiningDate, allocatedClasses, allocatedDepartments, ...rest } = variables;
+        return {
+          ...rest,
+          image: bannerUrl,
+          imageCldPubId: bannerCldPubId,
+          // address, age, gender, joiningDate, allocatedClasses, allocatedDepartments would need separate endpoints/tables
+        };
+      }
+      return variables;
+    },
     mapResponse: async (response) => {
       if(!response.ok) {
         throw await buildHttpError(response);
@@ -87,7 +105,10 @@ const options: CreateDataProviderOptions = {
   },
 
   getOne: {
-    getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+    getEndpoint: ({ resource, id }) => {
+      const endpoint = resource === 'teachers' ? 'users' : resource;
+      return `${endpoint}/${id}`;
+    },
     mapResponse: async (response) => {
       if(!response.ok) {
         throw await buildHttpError(response);

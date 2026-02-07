@@ -306,6 +306,10 @@
         @apply max-w-3xl gap-2 w-full mx-auto relative overflow-hidden border shadow-sm border-foreground/20;
     }
 
+    .teacher-form-card{
+        @apply max-w-3xl gap-2 w-full mx-auto relative overflow-hidden border shadow-sm border-foreground/20;
+    }
+
     .upload-dropzone {
         @apply flex flex-col items-center justify-center gap-4 min-h-40 border-2 border-dashed border-foreground/20 bg-primary/5 w-full mt-3 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed rounded-md;
 

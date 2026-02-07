@@ -86,3 +86,18 @@ export const enrollmentSchema = z.object({
         .min(1, "Class ID is required"),
     studentId: z.string().min(1, "Student ID is required"),
 });
+
+export const teacherSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    address: z.string().min(5, "Address must be at least 5 characters"),
+    age: z.coerce.number().min(18, "Age must be at least 18").max(120, "Invalid age"),
+    gender: z.enum(["male", "female", "other"], {
+        required_error: "Please select a gender",
+    }),
+    joiningDate: z.string().min(1, "Joining date is required"),
+    bannerUrl: z.string().min(1, "Profile image is required"),
+    bannerCldPubId: z.string().min(1, "Image reference is required"),
+    allocatedClasses: z.array(z.coerce.number()).optional(),
+    allocatedDepartments: z.array(z.string()).optional(),
+});
