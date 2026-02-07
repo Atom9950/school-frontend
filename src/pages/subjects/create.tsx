@@ -79,14 +79,11 @@ const SubjectCreate = () => {
       <Separator />
 
       <div className="my-4 flex items-center">
-        <Card className="subject-form-card w-full">
+        <Card className="subject-form-card">
           <CardHeader className="relative z-10">
-            <div className="flex items-center gap-3">
-              <BookOpen className="w-8 h-8 text-primary" />
-              <CardTitle className="text-2xl pb-0 font-bold">
-                Subject Details
-              </CardTitle>
-            </div>
+            <CardTitle className="text-2xl pb-0 font-bold text-gradient-orange">
+              Fill out form
+            </CardTitle>
           </CardHeader>
 
           <Separator />
@@ -99,9 +96,9 @@ const SubjectCreate = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Subject Name <span className="text-destructive">*</span>
-                      </FormLabel>
+                       <FormLabel>
+                         Subject Name <span className="text-orange-600">*</span>
+                       </FormLabel>
                       <FormControl className="border-2 border-primary rounded-md p-2">
                         <Input
                           placeholder="e.g. Biology, Chemistry, Mathematics"
@@ -121,9 +118,9 @@ const SubjectCreate = () => {
                   name="code"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Subject Code <span className="text-destructive">*</span>
-                      </FormLabel>
+                       <FormLabel>
+                         Subject Code <span className="text-orange-600">*</span>
+                       </FormLabel>
                       <FormControl className="border-2 border-primary rounded-md p-2">
                         <Input
                           placeholder="e.g. BIO101, CHEM202, MATH301"
@@ -144,9 +141,9 @@ const SubjectCreate = () => {
                     name="department"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Department <span className="text-destructive">*</span>
-                        </FormLabel>
+                         <FormLabel>
+                           Department <span className="text-orange-600">*</span>
+                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
@@ -179,9 +176,9 @@ const SubjectCreate = () => {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Description <span className="text-destructive">*</span>
-                      </FormLabel>
+                       <FormLabel>
+                         Description <span className="text-orange-600">*</span>
+                       </FormLabel>
                       <FormControl className="border-2 border-primary rounded-md p-2">
                         <Textarea
                           placeholder="Provide a brief description about this subject, what it covers, and its importance."
