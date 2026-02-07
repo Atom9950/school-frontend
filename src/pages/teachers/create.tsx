@@ -57,7 +57,7 @@ const Create = () => {
     const onSubmit = async (values: z.infer<typeof teacherSchema>) => {
         try {
             console.log("Form submission values:", values);
-            const apiUrl = process.env.VITE_BACKEND_BASE_URL || "http://localhost:8000";
+            const apiUrl = import.meta.env.VITE_BACKEND_BASE_URL || 'http://localhost:4000';
             const response = await fetch(`${apiUrl}/api/users`, {
                 method: "POST",
                 headers: {
