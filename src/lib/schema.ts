@@ -60,6 +60,23 @@ export const classSchema = z.object({
     schedules: z.array(scheduleSchema).optional(),
 });
 
+export const departmentSchema = z.object({
+    name: z
+        .string()
+        .min(2, "Department name must be at least 2 characters")
+        .max(50, "Department name must be at most 50 characters"),
+    description: z
+        .string({ required_error: "Description is required" })
+        .min(5, "Description must be at least 5 characters"),
+    bannerUrl: z
+        .string({ required_error: "Department banner is required" })
+        .min(1, "Department banner is required"),
+    bannerCldPubId: z
+        .string({ required_error: "Banner reference is required" })
+        .min(1, "Banner reference is required"),
+    headTeacherId: z.string({ required_error: "Head teacher is required" }).min(1, "Head teacher is required"),
+});
+
 export const enrollmentSchema = z.object({
     classId: z.coerce
         .number({

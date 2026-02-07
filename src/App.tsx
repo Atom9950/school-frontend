@@ -13,13 +13,16 @@ import { useNotificationProvider } from "./components/refine-ui/notification/use
 import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
 import { dataProvider } from "./providers/data";
 import Dashboard from "./pages/dashboard";
-import { BookOpen, GraduationCap, Home } from "lucide-react";
+import { BookOpen, GraduationCap, Home, Building2 } from "lucide-react";
 import { Layout } from "./components/refine-ui/layout/layout";
 import SubjectList from "./pages/subjects/list";
 import SubjectCreate from "./pages/subjects/create";
 import ClassesList from "./pages/classes/list";
 import ClassesCreate from "./pages/classes/create";
 import ClassesShow from "./pages/classes/show";
+import DepartmentsList from "./pages/departments/list";
+import DepartmentCreate from "./pages/departments/create";
+import DepartmentShow from "./pages/departments/show";
 
 
 function App() {
@@ -49,6 +52,13 @@ function App() {
                   }
                 },
                 {
+                  name: 'departments',
+                  list: '/departments',
+                  create: '/departments/create',
+                  show: '/departments/show/:id',
+                  meta: { label: 'Departments', icon: <Building2 /> }
+                },
+                {
                   name: 'subjects',
                   list: '/subjects',
                   create: '/subjects/create',
@@ -71,6 +81,11 @@ function App() {
                   </Layout>
                 }>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="departments">
+                  <Route index element={<DepartmentsList />} />
+                  <Route path="create" element={<DepartmentCreate />} />
+                  <Route path="show/:id" element={<DepartmentShow />} />
+                </Route>
                 <Route path="subjects">
                   <Route index element={<SubjectList />} />
                   <Route path="create" element={<SubjectCreate />} />

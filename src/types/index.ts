@@ -3,7 +3,7 @@ export type Subject = {
     name: string;
     code: string;
     description: string;
-    department: string;
+    departmentId: number;
     createdAt?: string;
 };
 
@@ -93,6 +93,10 @@ export type Department = {
     id: number;
     name: string;
     description: string;
+    bannerUrl?: string;
+    bannerCldPubId?: string;
+    headTeacherId?: string;
+    headTeacher?: User;
 };
 
 export type ClassDetails = {
