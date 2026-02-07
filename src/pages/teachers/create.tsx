@@ -3,7 +3,7 @@ import { CreateView } from '@/components/refine-ui/views/create-view'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { useBack, useList } from '@refinedev/core'
+import { useBack, useList, useGo } from '@refinedev/core'
 import React from 'react'
 import {zodResolver} from '@hookform/resolvers/zod'
 import { useForm } from "@refinedev/react-hook-form";
@@ -25,12 +25,14 @@ import { ClassDetails, Department } from '@/types'
 
 const Create = () => {
     const back = useBack();
+    const go = useGo();
 
     const form = useForm({
         resolver: zodResolver(teacherSchema),
         refineCoreProps: {
             resource: "teachers",
             action: "create",
+            redirect: false,
         },
         defaultValues: {
             name: "",
@@ -47,7 +49,6 @@ const Create = () => {
     });
 
     const {
-        refineCore: { onFinish },
         handleSubmit,
         formState: { isSubmitting, errors },
         control,
@@ -55,7 +56,32 @@ const Create = () => {
 
     const onSubmit = async (values: z.infer<typeof teacherSchema>) => {
         try {
-            await onFinish(values);
+            console.log("Form submission values:", values);
+            const response = await fetch("http://localhost:8000/api/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: values.name,
+                    email: values.email,
+                    address: values.address,
+                    age: values.age,
+                    gender: values.gender,
+                    joiningDate: values.joiningDate,
+                    bannerUrl: values.bannerUrl,
+                    bannerCldPubId: values.bannerCldPubId,
+                    role: "teacher"
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to create teacher");
+            }
+
+            const data = await response.json();
+            console.log("Teacher created:", data);
+            go({ to: { resource: "teachers", action: "list" } });
         } catch (error) {
             console.error("Error creating teacher:", error);
         }

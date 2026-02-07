@@ -1,8 +1,9 @@
-import { useShow } from '@refinedev/core'
-import { Breadcrumb } from '@/components/refine-ui/layout/breadcrumb'
-import { ShowView } from '@/components/refine-ui/views/show-view'
+import { ShowView, ShowViewHeader } from '@/components/refine-ui/views/show-view'
 import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import { User } from '@/types'
+import { useShow } from '@refinedev/core'
 import React from 'react'
 
 const TeacherShow = () => {
@@ -15,8 +16,9 @@ const TeacherShow = () => {
 
   if (isLoading || isError || !teacher) {
     return (
-      <ShowView>
-        <Breadcrumb />
+      <ShowView className='teacher-view teacher-show'>
+        <ShowViewHeader resource='teachers' title='Teacher Details' />
+
         <p className='state-message'>
           {isLoading ? 'Loading Teacher Details...' : isError ? 'Error loading teacher details' : 'Teacher not found'}
         </p>
@@ -24,55 +26,110 @@ const TeacherShow = () => {
     )
   }
 
+  const { name, email, role, department, image, address, age, gender, joiningDate, classes, departments } = teacher
+
   return (
-    <ShowView>
-      <Breadcrumb />
+    <ShowView className='teacher-view teacher-show'>
+      <ShowViewHeader resource='teachers' title='Teacher Details' />
 
-      <div className='flex items-center justify-between mb-8'>
-        <h1 className='page-title'>{teacher.name}</h1>
-      </div>
-
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-        <div className='space-y-4'>
-          <div>
-            <label className='text-sm font-medium text-muted-foreground'>Name</label>
-            <p className='text-foreground text-lg'>{teacher.name}</p>
-          </div>
-
-          <div>
-            <label className='text-sm font-medium text-muted-foreground'>Email</label>
-            <p className='text-foreground'>{teacher.email}</p>
-          </div>
-
-          <div>
-            <label className='text-sm font-medium text-muted-foreground'>Role</label>
-            <div className='mt-1'>
-              <Badge>{teacher.role}</Badge>
-            </div>
-          </div>
-
-          <div>
-            <label className='text-sm font-medium text-muted-foreground'>Department</label>
-            <p className='text-foreground'>{teacher.department || 'N/A'}</p>
-          </div>
-        </div>
-
-        {teacher.image && (
-          <div className='flex justify-center md:justify-end'>
-            <img 
-              src={teacher.image} 
-              alt={teacher.name}
-              className='w-48 h-48 rounded-lg object-cover'
-            />
-          </div>
+      <div className='banner'>
+        {image ? (
+          <img alt='Teacher Banner' src={image} />
+        ) : (
+          <div className='placeholder' />
         )}
       </div>
 
-      {teacher.createdAt && (
-        <div className='mt-6 text-sm text-muted-foreground'>
-          <p>Created: {new Date(teacher.createdAt).toLocaleDateString()}</p>
+      <Card className='details-card'>
+        <div className='details-header'>
+          <div>
+            <h1>{name}</h1>
+            <p>{email}</p>
+          </div>
+
+          <div>
+            <Badge variant={role === 'teacher' ? 'default' : 'secondary'}>{role?.toUpperCase()}</Badge>
+          </div>
         </div>
-      )}
+
+        <div className='details-grid'>
+          <div className='instructor'>
+            <p>Contact Information</p>
+            <div>
+              <div>
+                <p>{email}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className='department'>
+            <p>Personal Information</p>
+
+            <div>
+              <p>{gender ? `${gender}` : 'N/A'}</p>
+              <p>{age ? `Age: ${age}` : 'Age not provided'}</p>
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className='subject'>
+          <p>Address</p>
+
+          <div>
+            <p>{address || 'No address provided'}</p>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className='subject'>
+          <p>Joining Date</p>
+
+          <div>
+            <p>{joiningDate ? new Date(joiningDate).toLocaleDateString() : 'Not specified'}</p>
+          </div>
+        </div>
+
+        {departments && departments.length > 0 && (
+          <>
+            <Separator />
+
+            <div className='subject'>
+              <p>Allocated Departments</p>
+
+              <div>
+                {departments.map((dept) => (
+                  <div key={dept.id} className='mb-3'>
+                    <p className='font-semibold'>{dept.name}</p>
+                    <p className='text-xs text-muted-foreground'>{dept.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {classes && classes.length > 0 && (
+          <>
+            <Separator />
+
+            <div className='subject'>
+              <p>Allocated Classes</p>
+
+              <div>
+                {classes.map((cls) => (
+                  <div key={cls.id} className='mb-3'>
+                    <p className='font-semibold'>{cls.name}</p>
+                    <p className='text-xs text-muted-foreground'>{cls.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
     </ShowView>
   )
 }

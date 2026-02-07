@@ -81,6 +81,12 @@ export type User = {
     image?: string;
     imageCldPubId?: string;
     department?: string;
+    address?: string;
+    age?: string;
+    gender?: string;
+    joiningDate?: string;
+    classes?: ClassDetails[];
+    departments?: Department[];
 };
 
 export type Schedule = {
