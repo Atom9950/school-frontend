@@ -72,6 +72,8 @@ const Create = () => {
                     joiningDate: values.joiningDate,
                     bannerUrl: values.bannerUrl,
                     bannerCldPubId: values.bannerCldPubId,
+                    allocatedDepartments: values.allocatedDepartments,
+                    allocatedClasses: values.allocatedClasses,
                     role: "teacher"
                 }),
             });
