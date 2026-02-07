@@ -6,18 +6,22 @@ import { User } from '@/types'
 import React from 'react'
 
 const TeacherShow = () => {
-  const { queryResult } = useShow<User>({
-    resource: 'users'
+  const { query } = useShow<User>({
+    resource: 'teachers'
   })
 
-  const teacher = queryResult.data?.data
+  const teacher = query.data?.data
+  const { isLoading, isError } = query
 
-  if (queryResult.isLoading) {
-    return <div>Loading...</div>
-  }
-
-  if (!teacher) {
-    return <div>Teacher not found</div>
+  if (isLoading || isError || !teacher) {
+    return (
+      <ShowView>
+        <Breadcrumb />
+        <p className='state-message'>
+          {isLoading ? 'Loading Teacher Details...' : isError ? 'Error loading teacher details' : 'Teacher not found'}
+        </p>
+      </ShowView>
+    )
   }
 
   return (
