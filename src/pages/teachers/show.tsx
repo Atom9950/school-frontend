@@ -26,7 +26,7 @@ const TeacherShow = () => {
     )
   }
 
-  const { name, email, role, department, image, address, age, gender, joiningDate, classes, departments } = teacher
+  const { name, email, role, department, image, address, age, gender, joiningDate, bio, classes, departments } = teacher
 
   return (
     <ShowView className='teacher-view teacher-show'>
@@ -79,6 +79,16 @@ const TeacherShow = () => {
 
           <div>
             <p>{address || 'No address provided'}</p>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className='subject'>
+          <p>Bio</p>
+
+          <div>
+            <p>{bio || 'No bio provided'}</p>
           </div>
         </div>
 

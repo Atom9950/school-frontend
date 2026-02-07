@@ -98,6 +98,7 @@ export const teacherSchema = z.object({
     joiningDate: z.string().min(1, "Joining date is required"),
     bannerUrl: z.string().min(1, "Profile image is required"),
     bannerCldPubId: z.string().min(1, "Image reference is required"),
+    bio: z.string().min(10, "Bio must be at least 10 characters").max(500, "Bio must be at most 500 characters"),
     allocatedClasses: z.array(z.coerce.number()).optional(),
     allocatedDepartments: z.array(z.string()).optional(),
 });

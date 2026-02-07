@@ -43,6 +43,7 @@ const Create = () => {
             joiningDate: "",
             bannerUrl: "",
             bannerCldPubId: "",
+            bio: "",
             allocatedClasses: [],
             allocatedDepartments: [],
         },
@@ -72,6 +73,7 @@ const Create = () => {
                     joiningDate: values.joiningDate,
                     bannerUrl: values.bannerUrl,
                     bannerCldPubId: values.bannerCldPubId,
+                    bio: values.bio,
                     allocatedDepartments: values.allocatedDepartments,
                     allocatedClasses: values.allocatedClasses,
                     role: "teacher"
@@ -223,6 +225,27 @@ const Create = () => {
                                             <FormControl className='border-2 border-primary rounded-md p-2'>
                                                 <Input
                                                     placeholder="123 Main Street"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={control}
+                                    name="bio"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Bio <span className="text-orange-600">*</span>
+                                            </FormLabel>
+                                            <FormControl className='border-2 border-primary rounded-md p-2'>
+                                                <textarea
+                                                    placeholder="Write the educational background, qualifications, and experience of the teacher."
+                                                    className="w-full px-3 py-2 border rounded-md"
+                                                    rows={4}
                                                     {...field}
                                                 />
                                             </FormControl>
