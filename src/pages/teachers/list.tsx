@@ -66,6 +66,21 @@ const TeacherList = () => {
   const teacherTable = useTable<User>({
     columns: useMemo<ColumnDef<User>[]>(() => [
       {
+        id: 'image',
+        accessorKey: 'image',
+        size: 80,
+        header: () => <p className='column-title ml-2'>Photo</p>,
+        cell: ({ getValue }) => (
+          <div className='flex items-center justify-center ml-2'>
+            <img
+              src={getValue<string>() || '/placeholder-user.png'}
+              alt='Teacher Photo'
+              className='w-10 h-10 rounded-full object-cover'
+            />
+          </div>
+        )
+      },
+      {
         id: 'name',
         accessorKey: 'name',
         size: 200,

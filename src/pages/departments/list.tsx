@@ -19,13 +19,27 @@ const DepartmentsList = () => {
 
     const departmentColumns = useMemo<ColumnDef<Department>[]>(() => [
         {
+            id: 'bannerUrl',
+            accessorKey: 'bannerUrl',
+            size: 80,
+            header: () => <p className="column-title ml-2">Banner</p>,
+            cell: ({ getValue }) => (
+                <div className="flex items-center justify-center ml-2">
+                    <img
+                        src={getValue<string>() || '/placeholder-class.png'}
+                        alt="Department Banner"
+                        className="w-10 h-10 rounded object-cover"
+                    />
+                </div>
+            )
+        },
+        {
             id: 'name',
             accessorKey: 'name',
             size: 250,
             header: () => <p className="column-title">Department Name</p>,
             cell: ({ getValue }) => (
                 <div className="flex items-center gap-2">
-                    <Building2 className="w-4 h-4 text-primary" />
                     <span className="text-foreground font-medium">{getValue<string>()}</span>
                 </div>
             ),
