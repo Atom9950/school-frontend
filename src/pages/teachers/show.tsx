@@ -27,24 +27,21 @@ const TeacherShow = () => {
   }
 
   const { name, email, role, department, image, address, age, gender, joiningDate, bio, classes, departments } = teacher
+  const teacherInitials = name.split(' ').filter(Boolean).slice(0, 2).map((part) => part[0].toLocaleUpperCase()).join('')
+  const placeholderUrl = `https://placehold.co/600x400?text=${encodeURIComponent(teacherInitials || "NA")}`
 
   return (
     <ShowView className='teacher-view teacher-show'>
       <ShowViewHeader resource='teachers' title='Teacher Details' />
 
-      <div className='banner'>
-        {image ? (
-          <img alt='Teacher Banner' src={image} />
-        ) : (
-          <div className='placeholder' />
-        )}
-      </div>
-
       <Card className='details-card'>
         <div className='details-header'>
-          <div>
-            <h1>{name}</h1>
-            <p>{email}</p>
+          <div className='flex items-center gap-4'>
+            <img src={image ?? placeholderUrl} alt={name} className='size-23 rounded-full object-cover flex-shrink-0' />
+            <div>
+              <h1>{name}</h1>
+              <p>{email}</p>
+            </div>
           </div>
 
           <div>
