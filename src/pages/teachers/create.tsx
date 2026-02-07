@@ -58,7 +58,7 @@ const Create = () => {
         try {
             console.log("Form submission values:", values);
             const apiUrl = import.meta.env.VITE_BACKEND_BASE_URL || 'http://localhost:4000';
-            const response = await fetch(`${apiUrl}/api/users`, {
+            const response = await fetch(`${apiUrl}/users`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
