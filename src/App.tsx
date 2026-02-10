@@ -28,6 +28,7 @@ import TeacherShow from "./pages/teachers/show";
 import TeacherCreate from "./pages/teachers/create";
 import StudentsList from "./pages/students/list";
 import StudentCreate from "./pages/students/create";
+import StudentShow from "./pages/students/show";
 
 
 function App() {
@@ -126,6 +127,7 @@ function App() {
                   <Route path="students">
                     <Route index element={<StudentsList />} />
                     <Route path="create" element={<StudentCreate />} />
+                    <Route path="show/:id" element={<StudentShow />} />
                   </Route>
                   </Route>
               </Routes>
