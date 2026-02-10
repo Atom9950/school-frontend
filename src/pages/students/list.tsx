@@ -11,18 +11,27 @@ import { User } from '@/types'
 import { useTable } from '@refinedev/react-table'
 import { ColumnDef } from '@tanstack/react-table'
 import { Search, Eye } from 'lucide-react'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useGo } from '@refinedev/core'
 
 const StudentsList = () => {
   const go = useGo()
   const [searchQuery, setSearchQuery] = useState("")
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
 
-  const searchFilters = searchQuery ? [
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  const searchFilters = debouncedSearchQuery ? [
     {
       field: 'name',
       operator: 'contains' as const,
-      value: searchQuery
+      value: debouncedSearchQuery
     }
   ] : [];
 
