@@ -86,7 +86,7 @@ const Dashboard = () => {
         <div className="dashboard-container space-y-6">
             {/* Welcome Header */}
             <div className="welcome-section">
-                <h1 className="text-3xl font-bold">Welcome to School Management</h1>
+                <h1 className="text-3xl font-bold">Welcome to CampusFlow</h1>
                 <p className="text-muted-foreground text-lg">
                     Manage your classes, subjects, and educational resources
                 </p>
