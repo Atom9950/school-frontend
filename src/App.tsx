@@ -13,7 +13,7 @@ import { useNotificationProvider } from "./components/refine-ui/notification/use
 import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
 import { dataProvider } from "./providers/data";
 import Dashboard from "./pages/dashboard";
-import { BookOpen, GraduationCap, Home, Building2, Users } from "lucide-react";
+import { BookOpen, GraduationCap, Home, Building2, Users, School } from "lucide-react";
 import { Layout } from "./components/refine-ui/layout/layout";
 import SubjectList from "./pages/subjects/list";
 import SubjectCreate from "./pages/subjects/create";
@@ -42,6 +42,10 @@ function App() {
                 syncWithLocation: true,
                 warnWhenUnsavedChanges: true,
                 projectId: "AT6Wr1-uuFfyM-5qAwn5",
+                title: {
+                  text: "CampusFlow",
+                  icon: <School />,
+                },
               }}
 
               resources={[
