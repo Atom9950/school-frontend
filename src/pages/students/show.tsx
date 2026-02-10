@@ -99,28 +99,26 @@ const StudentShow = () => {
 
         <Separator />
 
-        {rollNumber && (
+        {(rollNumber || department) && (
           <>
-            <div className='subject'>
-              <p>Roll Number</p>
+            <div className='grid grid-cols-2 gap-6'>
+              {rollNumber && (
+                <div className='subject'>
+                  <p>Roll Number</p>
+                  <div>
+                    <p>{rollNumber}</p>
+                  </div>
+                </div>
+              )}
 
-              <div>
-                <p>{rollNumber}</p>
-              </div>
-            </div>
-
-            <Separator />
-          </>
-        )}
-
-        {department && (
-          <>
-            <div className='subject'>
-              <p>Department</p>
-
-              <div>
-                <p className='font-semibold'>{department.name}</p>
-              </div>
+              {department && (
+                <div className='subject'>
+                  <p>Department</p>
+                  <div>
+                    <p className='font-semibold'>{department.name}</p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <Separator />
@@ -141,28 +139,26 @@ const StudentShow = () => {
           </>
         )}
 
-        {fathersName && (
+        {(fathersName || mothersName) && (
           <>
-            <div className='subject'>
-              <p>Father's Name</p>
+            <div className='grid grid-cols-2 gap-6'>
+              {fathersName && (
+                <div className='subject'>
+                  <p>Father's Name</p>
+                  <div>
+                    <p>{fathersName}</p>
+                  </div>
+                </div>
+              )}
 
-              <div>
-                <p>{fathersName}</p>
-              </div>
-            </div>
-
-            <Separator />
-          </>
-        )}
-
-        {mothersName && (
-          <>
-            <div className='subject'>
-              <p>Mother's Name</p>
-
-              <div>
-                <p>{mothersName}</p>
-              </div>
+              {mothersName && (
+                <div className='subject'>
+                  <p>Mother's Name</p>
+                  <div>
+                    <p>{mothersName}</p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <Separator />
