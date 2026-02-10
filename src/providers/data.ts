@@ -66,6 +66,9 @@ const options: CreateDataProviderOptions = {
           if(field === 'department') {
             params.department = value;
           }
+          if(field === 'gender') {
+            params.gender = value;
+          }
         }
 
       })

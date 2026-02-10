@@ -6,18 +6,29 @@ import { ListView } from '@/components/refine-ui/views/list-view'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { BACKEND_BASE_URL } from '@/constants'
 import { User } from '@/types'
 import { useTable } from '@refinedev/react-table'
 import { ColumnDef } from '@tanstack/react-table'
 import { Search, Eye } from 'lucide-react'
 import React, { useMemo, useState, useEffect } from 'react'
-import { useGo } from '@refinedev/core'
+import { useGo, useList } from '@refinedev/core'
 
 const StudentsList = () => {
   const go = useGo()
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
+  const [selectedDepartment, setSelectedDepartment] = useState('all')
+  const [selectedGender, setSelectedGender] = useState('all')
+
+  const { query: departmentsQuery } = useList<any>({
+    resource: 'departments',
+    pagination: { pageSize: 100 }
+  });
+
+  const departments = departmentsQuery?.data?.data || [];
+  const genders = ['male', 'female', 'others'];
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -27,6 +38,14 @@ const StudentsList = () => {
     return () => clearTimeout(timer)
   }, [searchQuery])
 
+
+
+  const departmentFilters = selectedDepartment === 'all' ? [] : [
+    { field: 'department', operator: 'eq' as const, value: selectedDepartment }
+  ];
+  const genderFilters = selectedGender === 'all' ? [] : [
+    { field: 'gender', operator: 'eq' as const, value: selectedGender }
+  ];
   const searchFilters = debouncedSearchQuery ? [
     {
       field: 'name',
@@ -34,7 +53,7 @@ const StudentsList = () => {
       value: debouncedSearchQuery
     }
   ] : [];
-
+  
   const studentTable = useTable<any>({
     columns: useMemo<ColumnDef<any>[]>(() => [
       {
@@ -129,23 +148,22 @@ const StudentsList = () => {
       }
     ], [go]),
     refineCoreProps: {
-      resource: 'students',
-      pagination: {
-        pageSize: 10,
-        mode: 'server',
-      },
-      filters: {
-        permanent: searchFilters,
-      },
-      sorters: {
-        initial: [
-          {
-            field: 'id',
-            order: 'desc'
-          }
-        ]
-      },
-
+     resource: 'students',
+     pagination: {
+       pageSize: 10,
+       mode: 'server',
+     },
+     filters: {
+       permanent: [...departmentFilters, ...genderFilters, ...searchFilters],
+     },
+     sorters: {
+       initial: [
+         {
+           field: 'id',
+           order: 'desc'
+         }
+       ]
+     },
     }
   })
   return (
@@ -157,7 +175,7 @@ const StudentsList = () => {
       <div className='intro-row'>
         <p>Quick access to essential metrics and management tools.</p>
 
-        <div className='action-row'>
+        <div className='actions-row'>
           <div className='search-field'>
             <Search className='search-icon'/>
 
@@ -170,7 +188,49 @@ const StudentsList = () => {
             />
           </div>
 
-          <CreateButton />
+          <div className='flex flex-wrap gap-2 w-full sm:w-auto'>
+            <Select
+              value={selectedDepartment}
+              onValueChange={setSelectedDepartment}
+            >
+              <SelectTrigger className='w-[180px] !border-primary'>
+                <SelectValue placeholder='Filter by department' />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value='all'>
+                  All Departments
+                </SelectItem>
+                {departments.map(dept => (
+                  <SelectItem key={dept.id} value={dept.name}>
+                    {dept.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={selectedGender}
+              onValueChange={setSelectedGender}
+            >
+              <SelectTrigger className='w-[180px] !border-primary'>
+                <SelectValue placeholder='Filter by gender' />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value='all'>
+                  All Genders
+                </SelectItem>
+                {genders.map(gender => (
+                  <SelectItem key={gender} value={gender}>
+                    {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <CreateButton />
+          </div>
         </div>
       </div>
 
