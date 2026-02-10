@@ -66,6 +66,7 @@ const show = () => {
               <div>
                 <p>{teacherName}</p>
                 <p>{teacher?.email}</p>
+                <p>{teacher?.phoneNumber || 'No mobile number provided'}</p>
               </div>
             </div>
           </div>
