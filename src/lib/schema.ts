@@ -109,3 +109,22 @@ export const teacherSchema = z.object({
     allocatedClasses: z.array(z.coerce.number()).optional(),
     allocatedDepartments: z.array(z.string()).optional(),
 });
+
+export const studentSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address").optional().or(z.literal("")),
+    address: z.string().min(5, "Address must be at least 5 characters"),
+    age: z.coerce.number().min(5, "Age must be at least 5").max(120, "Invalid age"),
+    gender: z.enum(["male", "female", "other"], {
+        required_error: "Please select a gender",
+    }),
+    joiningDate: z.string().min(1, "Admission date is required"),
+    bannerUrl: z.string().min(1, "Profile image is required"),
+    bannerCldPubId: z.string().min(1, "Image reference is required"),
+    phoneNumber: z.string().min(10, "Phone number must be at least 10 characters"),
+    bio: z.string().min(1, "WhatsApp number is required"),
+    department: z.coerce.number().min(1, "Department is required"),
+    fathersName: z.string().optional(),
+    mothersName: z.string().optional(),
+    rollNumber: z.string().optional(),
+});

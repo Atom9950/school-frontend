@@ -56,6 +56,18 @@ const options: CreateDataProviderOptions = {
           if(field === 'teacher') params.teacher = value;
         }
 
+        if(resource === 'users' || resource === 'teachers' || resource === 'students') {
+          if(field === 'role') {
+            params.role = value;
+          }
+          if(field === 'name') {
+            params.search = value;
+          }
+          if(field === 'department') {
+            params.department = value;
+          }
+        }
+
       })
 
       return params;
@@ -80,6 +92,7 @@ const options: CreateDataProviderOptions = {
   create: {
     getEndpoint: ({ resource }) => {
       if (resource === 'teachers') return 'users';
+      if (resource === 'students') return 'students';
       return resource;
     },
     buildBodyParams: async({ variables, resource }) => {

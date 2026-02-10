@@ -26,6 +26,8 @@ import DepartmentShow from "./pages/departments/show";
 import TeacherList from "./pages/teachers/list";
 import TeacherShow from "./pages/teachers/show";
 import TeacherCreate from "./pages/teachers/create";
+import StudentsList from "./pages/students/list";
+import StudentCreate from "./pages/students/create";
 
 
 function App() {
@@ -79,12 +81,19 @@ function App() {
                    meta: { label: 'Classes', icon: <GraduationCap /> }
                  },
                 {
-                   name: 'teachers',
-                   list: '/teachers',
-                   create: '/teachers/create',
-                   show: '/teachers/show/:id',
-                   meta: { label: 'Teachers', icon: <Users /> }
-                 }
+                    name: 'teachers',
+                    list: '/teachers',
+                    create: '/teachers/create',
+                    show: '/teachers/show/:id',
+                    meta: { label: 'Teachers', icon: <Users /> }
+                  },
+                {
+                    name: 'students',
+                    list: '/students',
+                    create: '/students/create',
+                    show: '/students/show/:id',
+                    meta: { label: 'Students', icon: <Users /> }
+                  }
                 ]}
             >
               <Routes>
@@ -110,11 +119,15 @@ function App() {
                    <Route path="show/:id" element={<ClassesShow />} /> {/* Placeholder for class details page */}
                  </Route>
                  <Route path="teachers">
-                   <Route index element={<TeacherList />} />
-                   <Route path="create" element={<TeacherCreate />} />
-                   <Route path="show/:id" element={<TeacherShow />} />
-                 </Route>
-                 </Route>
+                    <Route index element={<TeacherList />} />
+                    <Route path="create" element={<TeacherCreate />} />
+                    <Route path="show/:id" element={<TeacherShow />} />
+                  </Route>
+                  <Route path="students">
+                    <Route index element={<StudentsList />} />
+                    <Route path="create" element={<StudentCreate />} />
+                  </Route>
+                  </Route>
               </Routes>
               <Toaster />
               <RefineKbar />

@@ -17,6 +17,7 @@ const Dashboard = () => {
         activeClasses: 0,
         totalSubjects: 0,
         totalTeachers: 0,
+        totalStudents: 0,
     });
 
     // Fetch classes
@@ -39,9 +40,17 @@ const Dashboard = () => {
         pagination: { pageSize: 100 },
     });
 
+    // Fetch students
+    const { query: studentsQuery } = useList<User>({
+        resource: "users",
+        filters: [{ field: "role", operator: "eq", value: "student" }],
+        pagination: { pageSize: 100 },
+    });
+
     const classes = classesQuery?.data?.data || [];
     const subjects = subjectsQuery?.data?.data || [];
     const teachers = teachersQuery?.data?.data || [];
+    const students = studentsQuery?.data?.data || [];
 
     // Fetch stats
     useEffect(() => {
@@ -51,16 +60,18 @@ const Dashboard = () => {
                     ? BACKEND_BASE_URL.slice(0, -1)
                     : BACKEND_BASE_URL;
 
-                const [classesRes, subjectsRes, teachersRes] = await Promise.all([
+                const [classesRes, subjectsRes, teachersRes, studentsRes] = await Promise.all([
                     fetch(`${baseUrl}/classes`),
                     fetch(`${baseUrl}/subjects`),
                     fetch(`${baseUrl}/users?role=teacher`),
+                    fetch(`${baseUrl}/users?role=student`),
                 ]);
 
-                if (classesRes.ok && subjectsRes.ok && teachersRes.ok) {
+                if (classesRes.ok && subjectsRes.ok && teachersRes.ok && studentsRes.ok) {
                     const classesData = await classesRes.json();
                     const subjectsData = await subjectsRes.json();
                     const teachersData = await teachersRes.json();
+                    const studentsData = await studentsRes.json();
 
                     const allClasses = classesData.data || [];
                     const activeCount = allClasses.filter(
@@ -72,6 +83,7 @@ const Dashboard = () => {
                         activeClasses: activeCount,
                         totalSubjects: (subjectsData.data || []).length,
                         totalTeachers: (teachersData.data || []).length,
+                        totalStudents: (studentsData.data || []).length,
                     });
                 }
             } catch (error) {
@@ -178,6 +190,28 @@ const Dashboard = () => {
                         </Link>
                     </Button>
                 </Card>
+
+                {/* Total Students Card */}
+                <Card className="stat-card p-6 flex flex-col justify-between">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-muted-foreground">
+                                Total Students
+                            </p>
+                            <p className="text-3xl font-bold mt-2">{stats.totalStudents}</p>
+                        </div>
+                        <Users className="w-10 h-10 text-primary" />
+                    </div>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="mt-4 w-full justify-start p-0"
+                    >
+                        <Link to="/students" className="text-sm hover:underline">
+                            View all students →
+                        </Link>
+                    </Button>
+                </Card>
             </div>
 
             <Separator />
@@ -210,6 +244,12 @@ const Dashboard = () => {
                         <span className="text-sm font-medium group-hover:text-primary transition-colors">Add Teacher</span>
                     </Link>
 
+                    {/* Add Students */}
+                    <Link to="/students/create" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Plus className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">Add Student</span>
+                    </Link>
+
                     {/* Browse Classes */}
                     <Link to="/classes" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
                         <Eye className="w-4 h-4 text-primary" />
@@ -232,6 +272,12 @@ const Dashboard = () => {
                     <Link to="/teachers" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
                         <Eye className="w-4 h-4 text-primary" />
                         <span className="text-sm font-medium group-hover:text-primary transition-colors">View Teachers</span>
+                    </Link>
+
+                    {/* View Students */}
+                    <Link to="/students" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Eye className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">View Students</span>
                     </Link>
 
                     {/* Settings */}
