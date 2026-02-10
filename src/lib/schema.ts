@@ -112,7 +112,7 @@ export const teacherSchema = z.object({
 
 export const studentSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Invalid email address").optional().or(z.literal("")),
+    email: z.string().email("Invalid email address").nullable().optional(),
     address: z.string().min(5, "Address must be at least 5 characters"),
     age: z.coerce.number().min(5, "Age must be at least 5").max(120, "Invalid age"),
     gender: z.enum(["male", "female", "other"], {

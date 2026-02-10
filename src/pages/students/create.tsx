@@ -62,11 +62,6 @@ const StudentCreate = () => {
                 image: values.bannerUrl,
                 imageCldPubId: values.bannerCldPubId,
             };
-            // Generate default email if not provided
-            if (!payload.email) {
-                const timestamp = Date.now();
-                payload.email = `student_${timestamp}@school.local`;
-            }
             await onFinish(payload);
         } catch (error) {
             console.error("Error creating student:", error);
@@ -335,7 +330,11 @@ const StudentCreate = () => {
                                                 <Input
                                                     type="email"
                                                     placeholder="student@example.com"
-                                                    {...field}
+                                                    onChange={(e) => field.onChange(e.target.value || null)}
+                                                    value={(field.value as string | null | undefined) ?? ""}
+                                                    name={field.name}
+                                                    ref={field.ref}
+                                                    onBlur={field.onBlur}
                                                 />
                                             </FormControl>
                                             <FormMessage />

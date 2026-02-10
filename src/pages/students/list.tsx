@@ -51,13 +51,13 @@ const StudentsList = () => {
         cell: ({ getValue}) => <span className='text-foreground'>{getValue<string>()}</span>,
         filterFn: 'includesString'
       },
-      {
-        id: 'email',
-        accessorKey: 'email',
-        size: 250,
-        header: () => <p className='column-title'>Email</p>,
-        cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>()}</span>,
-      },
+      // {
+      //   id: 'email',
+      //   accessorKey: 'email',
+      //   size: 250,
+      //   header: () => <p className='column-title'>Email</p>,
+      //   cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>()}</span>,
+      // },
       {
         id: 'phoneNumber',
         accessorKey: 'phoneNumber',
