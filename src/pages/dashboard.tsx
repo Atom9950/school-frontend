@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Users, BookOpen, GraduationCap, TrendingUp } from "lucide-react";
+import { Users, BookOpen, GraduationCap, TrendingUp, Plus, Eye, Settings, FileText, CheckSquare } from "lucide-react";
 import { Link } from "react-router";
 import { AdvancedImage } from "@cloudinary/react";
 import { bannerPhoto } from "@/lib/cloudinary";
@@ -184,61 +184,61 @@ const Dashboard = () => {
 
             {/* Quick Actions */}
             <div className="quick-actions-section">
-                <h2 className="text-xl font-bold mb-6">Quick Actions</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {/* Create New Class Tile */}
-                    <Link to="/classes/create">
-                      <Card className="p-6 h-40 flex flex-col justify-between cursor-pointer hover:shadow-lg transition-all duration-200 hover:border-primary group">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
-                              Create Class
-                            </h3>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              Set up new class
-                            </p>
-                          </div>
-                          <Badge>New</Badge>
-                        </div>
-                        <GraduationCap className="w-8 h-8 text-primary" />
-                      </Card>
+                <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
+                <div className="flex flex-wrap gap-3">
+                    {/* Create Class */}
+                    <Link to="/classes/create" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Plus className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">Create Class</span>
                     </Link>
 
-                    {/* Add Subject Tile */}
-                    <Link to="/subjects/create">
-                      <Card className="p-6 h-40 flex flex-col justify-between cursor-pointer hover:shadow-lg transition-all duration-200 hover:border-primary group">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
-                              Add Subject
-                            </h3>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              Create subject
-                            </p>
-                          </div>
-                          <Badge>Manage</Badge>
-                        </div>
-                        <BookOpen className="w-8 h-8 text-primary" />
-                      </Card>
+                    {/* Create Department */}
+                    <Link to="/departments/create" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Plus className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">Create Department</span>
                     </Link>
 
-                    {/* Browse Classes Tile */}
-                    <Link to="/classes">
-                      <Card className="p-6 h-40 flex flex-col justify-between cursor-pointer hover:shadow-lg transition-all duration-200 hover:border-primary group">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
-                              Browse Classes
-                            </h3>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              View all classes
-                            </p>
-                          </div>
-                          <Badge>View</Badge>
-                        </div>
-                        <Users className="w-8 h-8 text-primary" />
-                      </Card>
+                    {/* Add Subject */}
+                    <Link to="/subjects/create" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Plus className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">Add Subject</span>
                     </Link>
+
+                    {/* Add teachers */}
+                    <Link to="/teachers/create" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Plus className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">Add Teacher</span>
+                    </Link>
+
+                    {/* Browse Classes */}
+                    <Link to="/classes" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Eye className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">Browse Classes</span>
+                    </Link>
+
+                    {/* Browse Departments */}
+                    <Link to="/departments" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Eye className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">Browse Departments</span>
+                    </Link>
+
+                    {/* View Subjects */}
+                    <Link to="/subjects" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Eye className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">View Subjects</span>
+                    </Link>
+
+                    {/* View Teachers */}
+                    <Link to="/teachers" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Eye className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">View Teachers</span>
+                    </Link>
+
+                    {/* Settings */}
+                    {/* <Link to="/settings" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Settings className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">Settings</span>
+                    </Link> */}
                 </div>
             </div>
 
