@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Users, BookOpen, GraduationCap, TrendingUp, Plus, Eye, Settings, FileText, CheckSquare } from "lucide-react";
+import { Users, BookOpen, GraduationCap, TrendingUp, Plus, Eye, Settings, FileText, CheckSquare, User2, Users2 } from "lucide-react";
 import { Link } from "react-router";
 import { AdvancedImage } from "@cloudinary/react";
 import { bannerPhoto } from "@/lib/cloudinary";
@@ -42,8 +42,7 @@ const Dashboard = () => {
 
     // Fetch students
     const { query: studentsQuery } = useList<User>({
-        resource: "users",
-        filters: [{ field: "role", operator: "eq", value: "student" }],
+        resource: "students",
         pagination: { pageSize: 100 },
     });
 
@@ -64,7 +63,7 @@ const Dashboard = () => {
                     fetch(`${baseUrl}/classes`),
                     fetch(`${baseUrl}/subjects`),
                     fetch(`${baseUrl}/users?role=teacher`),
-                    fetch(`${baseUrl}/users?role=student`),
+                    fetch(`${baseUrl}/students`),
                 ]);
 
                 if (classesRes.ok && subjectsRes.ok && teachersRes.ok && studentsRes.ok) {
@@ -131,7 +130,7 @@ const Dashboard = () => {
                 </Card>
 
                 {/* Active Classes Card */}
-                <Card className="stat-card p-6 flex flex-col justify-between">
+                {/* <Card className="stat-card p-6 flex flex-col justify-between">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm font-medium text-muted-foreground">
@@ -145,7 +144,7 @@ const Dashboard = () => {
                         {Math.round((stats.activeClasses / stats.totalClasses) * 100)}%
                         active
                     </p>
-                </Card>
+                </Card> */}
 
                 {/* Total Subjects Card */}
                 <Card className="stat-card p-6 flex flex-col justify-between">
@@ -178,7 +177,7 @@ const Dashboard = () => {
                             </p>
                             <p className="text-3xl font-bold mt-2">{stats.totalTeachers}</p>
                         </div>
-                        <Users className="w-10 h-10 text-primary" />
+                        <Users2 className="w-10 h-10 text-primary" />
                     </div>
                     <Button
                         variant="ghost"
