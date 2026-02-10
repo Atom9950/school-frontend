@@ -89,15 +89,22 @@ const StudentsList = () => {
         cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>() || 'N/A'}</span>,
       },
       {
-        id: 'admissionDate',
-        accessorKey: 'admissionDate',
+        id: 'department',
+        accessorKey: 'department',
         size: 150,
-        header: () => <p className='column-title'>Admission Date</p>,
+        header: () => <p className='column-title'>Department</p>,
         cell: ({ getValue}) => {
-          const date = getValue<string>()
-          if (!date) return <span className='text-muted-foreground text-sm'>N/A</span>
-          return <span className='text-foreground text-sm'>{new Date(date).toLocaleDateString()}</span>
+          const value = getValue<any>()
+          const deptName = typeof value === 'object' ? value?.name : value
+          return <span className='text-foreground text-sm'>{deptName || 'N/A'}</span>
         },
+      },
+      {
+        id: 'rollNumber',
+        accessorKey: 'rollNumber',
+        size: 120,
+        header: () => <p className='column-title'>Roll Number</p>,
+        cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>() || 'N/A'}</span>,
       },
       {
         id: 'actions',
