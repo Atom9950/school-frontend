@@ -9,6 +9,7 @@ import { useTable } from "@refinedev/react-table";
 import { Department } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ShowButton } from "@/components/refine-ui/buttons/show.tsx";
+import { DeleteButton } from "@/components/refine-ui/buttons/delete.tsx";
 
 const DepartmentsList = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -56,6 +57,12 @@ const DepartmentsList = () => {
             size: 140,
             header: () => <p className="column-title">Details</p>,
             cell: ({ row }) => <ShowButton resource="departments" recordItemId={row.original.id} variant="outline" size="sm">View</ShowButton>
+        },
+        {
+            id: 'delete',
+            size: 100,
+            header: () => <p className="column-title">Action</p>,
+            cell: ({ row }) => <DeleteButton resource="departments" recordItemId={row.original.id} size="sm" />
         }
     ], []);
 
