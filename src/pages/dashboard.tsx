@@ -168,12 +168,15 @@ const Dashboard = () => {
                         </div>
                         <Users className="w-10 h-10 text-primary" />
                     </div>
-                    <p className="text-xs text-muted-foreground mt-4">
-                        {stats.totalTeachers > 0
-                            ? Math.round(stats.totalClasses / stats.totalTeachers)
-                            : 0}{" "}
-                        classes per teacher
-                    </p>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="mt-4 w-full justify-start p-0"
+                    >
+                        <Link to="/teachers" className="text-sm hover:underline">
+                            View all teachers →
+                        </Link>
+                    </Button>
                 </Card>
             </div>
 
