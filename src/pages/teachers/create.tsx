@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Loader2 } from 'lucide-react'
 import UploadWidget from '@/components/upload-widget'
-import { ClassDetails, Department } from '@/types'
+import { Department } from '@/types'
 
 const Create = () => {
     const back = useBack();
@@ -45,7 +45,6 @@ const Create = () => {
             bannerCldPubId: "",
             bio: "",
             phoneNumber: "",
-            allocatedClasses: [],
             allocatedDepartments: [],
         },
     });
@@ -77,7 +76,6 @@ const Create = () => {
                     bio: values.bio,
                     phoneNumber: values.phoneNumber,
                     allocatedDepartments: values.allocatedDepartments,
-                    allocatedClasses: values.allocatedClasses,
                     role: "teacher"
                 }),
             });
@@ -94,13 +92,6 @@ const Create = () => {
         }
     };
 
-    const {query: classesQuery} = useList<ClassDetails>({
-        resource: "classes",
-        pagination: {
-            pageSize: 100,
-        }
-    });
-
     const {query: departmentsQuery} = useList<Department>({
         resource: "departments",
         pagination: {
@@ -108,8 +99,6 @@ const Create = () => {
         }
     });
 
-    const classes = classesQuery?.data?.data || [];
-    const classesLoading = classesQuery.isLoading;
     const departments = departmentsQuery?.data?.data || [];
     const departmentsLoading = departmentsQuery.isLoading;
 
@@ -401,62 +390,6 @@ const Create = () => {
                                                         </button>
                                                     </div>
                                                 ))}
-                                            </div>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={control}
-                                    name="allocatedClasses"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Allocated Classes</FormLabel>
-                                            <Select
-                                                onValueChange={(value) => {
-                                                    const numValue = Number(value);
-                                                    const currentValue = field.value || [];
-                                                    if (currentValue.includes(numValue)) {
-                                                        field.onChange(currentValue.filter((item: number) => item !== numValue));
-                                                    } else {
-                                                        field.onChange([...currentValue, numValue]);
-                                                    }
-                                                }}
-                                                disabled={classesLoading}
-                                            >
-                                                <FormControl className='border-2 border-primary rounded-md p-2'>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Select classes" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {classes.map((cls) => (
-                                                        <SelectItem
-                                                            key={cls.id}
-                                                            value={cls.id.toString()}
-                                                        >
-                                                            {cls.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <div className="flex gap-2 flex-wrap mt-2">
-                                                {(field.value || []).map((classId: number) => {
-                                                    const cls = classes.find(c => c.id === classId);
-                                                    return (
-                                                        <div key={classId} className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm flex items-center gap-2">
-                                                            {cls?.name}
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => field.onChange((field.value || []).filter((item: number) => item !== classId))}
-                                                                className="hover:opacity-70"
-                                                            >
-                                                                ×
-                                                            </button>
-                                                        </div>
-                                                    );
-                                                })}
                                             </div>
                                             <FormMessage />
                                         </FormItem>
