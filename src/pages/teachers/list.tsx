@@ -1,4 +1,5 @@
 import { CreateButton } from '@/components/refine-ui/buttons/create'
+import { DeleteButton } from '@/components/refine-ui/buttons/delete'
 import { DataTable } from '@/components/refine-ui/data-table/data-table'
 import { Breadcrumb } from '@/components/refine-ui/layout/breadcrumb'
 import { ListView } from '@/components/refine-ui/views/list-view'
@@ -116,6 +117,12 @@ const TeacherList = () => {
             View
           </Button>
         ),
+      },
+      {
+        id: 'delete',
+        size: 100,
+        header: () => <p className='column-title'>Delete</p>,
+        cell: ({ row }) => <DeleteButton resource='users' recordItemId={row.original.id} variant='destructive' size='sm' />
       }
     ], []),
     refineCoreProps: {
