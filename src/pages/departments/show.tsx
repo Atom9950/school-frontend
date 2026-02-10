@@ -1,7 +1,7 @@
 import { ShowView, ShowViewHeader } from '@/components/refine-ui/views/show-view';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Department, Subject } from '@/types'
+import { Department, Subject, User } from '@/types'
 import { useShow, useList } from '@refinedev/core'
 import { AdvancedImage } from '@cloudinary/react';
 import { Building2 } from 'lucide-react';
@@ -21,6 +21,9 @@ const DepartmentShow = () => {
   });
 
   const departmentSubjects = subjectsQuery?.data?.data || [];
+
+  // Get teachers from department data (fetched from backend)
+  const departmentTeachers = department?.teachers || [];
 
   if(isLoading || isError || !department) {
     return(
@@ -68,6 +71,47 @@ const DepartmentShow = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        <Separator/>
+
+        <div className='teachers'>
+          <p>Associated Teachers ({departmentTeachers.length})</p>
+          
+          {departmentTeachers.length > 0 ? (
+            <div className='space-y-3'>
+              {departmentTeachers.map((teacher) => {
+                const teacherInitials = teacher.name
+                  .split(' ')
+                  .filter(Boolean)
+                  .slice(0, 2)
+                  .map((part) => part[0].toLocaleUpperCase())
+                  .join('');
+                const placeholderUrl = `https://placehold.co/100x100?text=${encodeURIComponent(teacherInitials || 'NA')}`;
+
+                return (
+                  <div key={teacher.id} className='p-3 border rounded-md bg-secondary/10'>
+                    <div className='flex items-center gap-3'>
+                      <img
+                        src={teacher.image ?? placeholderUrl}
+                        alt={teacher.name}
+                        className='w-12 h-12 rounded-full object-cover'
+                      />
+                      <div className='flex-1'>
+                        <p className='text-lg font-bold text-primary'>{teacher.name}</p>
+                        <p className='text-sm text-muted-foreground'>{teacher.email}</p>
+                        {teacher.phoneNumber && (
+                          <p className='text-sm text-muted-foreground'>{teacher.phoneNumber}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className='text-sm text-muted-foreground'>No teachers assigned to this department</p>
+          )}
         </div>
 
         <Separator/>

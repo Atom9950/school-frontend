@@ -105,6 +105,7 @@ export type Department = {
     bannerCldPubId?: string;
     headTeacherId?: string;
     headTeacher?: User;
+    teachers?: User[];
 };
 
 export type ClassDetails = {
