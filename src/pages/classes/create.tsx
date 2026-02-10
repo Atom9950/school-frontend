@@ -24,7 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2 } from 'lucide-react'
 import UploadWidget from '@/components/upload-widget'
-import { Subject, User } from '@/types'
+import { Subject, User, Department } from '@/types'
 
   
 
@@ -57,6 +57,13 @@ const Create = () => {
         }
     };
 
+    const {query: departmentsQuery} = useList<Department>({
+        resource: "departments",
+        pagination: {
+            pageSize: 100,
+        }
+    });
+
     const {query: subjectsQuery} = useList<Subject>({
         resource: "subjects",
         pagination: {
@@ -79,6 +86,8 @@ const Create = () => {
         }
     });
 
+    const departments = departmentsQuery?.data?.data || [];
+    const departmentsLoading = departmentsQuery.isLoading;
     const subjects = subjectsQuery?.data?.data || [];
     const subjectsLoading = subjectsQuery.isLoading;
     const teachers = teachersQuery?.data?.data || [];
@@ -162,6 +171,42 @@ const Create = () => {
                                                     {...field}
                                                 />
                                             </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={control}
+                                    name="departmentId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Department <span className="text-orange-600">*</span>
+                                            </FormLabel>
+                                            <Select
+                                                onValueChange={(value) =>
+                                                    field.onChange(Number(value))
+                                                }
+                                                value={field.value?.toString()}
+                                                disabled={departmentsLoading}
+                                            >
+                                                <FormControl className='border-2 border-primary rounded-md p-2'>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Select a department" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {departments.map((department) => (
+                                                        <SelectItem
+                                                            key={department.id}
+                                                            value={department.id.toString()}
+                                                        >
+                                                            {department.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}
