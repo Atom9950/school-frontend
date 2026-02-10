@@ -12,6 +12,7 @@ import {ColumnDef} from "@tanstack/react-table";
 import {Badge} from "@/components/ui/badge.tsx";
 import {useList} from "@refinedev/core";
 import {ShowButton} from "@/components/refine-ui/buttons/show.tsx";
+import {DeleteButton} from "@/components/refine-ui/buttons/delete.tsx";
 
 const ClassesList = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -105,6 +106,12 @@ const ClassesList = () => {
             size: 140,
             header: () => <p className="column-title">Details</p>,
             cell: ({ row }) => <ShowButton resource="classes" recordItemId={row.original.id} variant="outline" size="sm">View</ShowButton>
+        },
+        {
+            id: 'delete',
+            size: 140,
+            header: () => <p className="column-title">Actions</p>,
+            cell: ({ row }) => <DeleteButton resource="classes" recordItemId={row.original.id} variant="destructive" size="sm" />
         }
     ], []);
 
