@@ -1,7 +1,5 @@
-import { Breadcrumb } from '@/components/refine-ui/layout/breadcrumb'
-import {
-  CreateView,
-} from "@/components/refine-ui/views/create-view";
+import { Breadcrumb } from "@/components/refine-ui/layout/breadcrumb";
+import { CreateView } from "@/components/refine-ui/views/create-view";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -27,12 +25,48 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import UploadWidget from "@/components/upload-widget";
 import { User } from "@/types";
+import { useState, useMemo } from "react";
+
+const VALID_DEPARTMENTS = {
+  "Lower Nursery": 0,
+  "Upper Nursery": 1,
+  "KG-1": 2,
+  "KG-2": 3,
+  "Class 1": 4,
+  "Class I": 4,
+  "Class 2": 5,
+  "Class II": 5,
+  "Class 3": 6,
+  "Class III": 6,
+  "Class 4": 7,
+  "Class IV": 7,
+  "Class 5": 8,
+  "Class V": 8,
+  "Class 6": 9,
+  "Class VI": 9,
+  "Class 7": 10,
+  "Class VII": 10,
+  "Class 8": 11,
+  "Class VIII": 11,
+  "Class 9": 12,
+  "Class IX": 12,
+  "Class 10": 13,
+  "Class X": 13,
+  "Class 11": 14,
+  "Class XI": 14,
+  "Class 12": 15,
+  "Class XII": 15,
+};
 
 const DepartmentCreate = () => {
   const back = useBack();
+  const [departmentNameError, setDepartmentNameError] = useState<string | null>(
+    null,
+  );
+  const [isValidDepartment, setIsValidDepartment] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(departmentSchema),
@@ -47,7 +81,31 @@ const DepartmentCreate = () => {
     handleSubmit,
     formState: { isSubmitting, errors },
     control,
+    watch,
   } = form;
+
+  const departmentName = watch("name");
+
+  // Validate department name in real-time
+  useMemo(() => {
+    if (!departmentName) {
+      setDepartmentNameError(null);
+      setIsValidDepartment(false);
+      return;
+    }
+
+    const isValid = Object.keys(VALID_DEPARTMENTS).some(
+      (validName) => validName.toLowerCase() === departmentName.toLowerCase(),
+    );
+
+    if (isValid) {
+      setDepartmentNameError(null);
+      setIsValidDepartment(true);
+    } else {
+      setDepartmentNameError("Invalid department name. See suggestions below.");
+      setIsValidDepartment(false);
+    }
+  }, [departmentName]);
 
   const onSubmit = async (values: z.infer<typeof departmentSchema>) => {
     try {
@@ -156,13 +214,55 @@ const DepartmentCreate = () => {
                         Department Name{" "}
                         <span className="text-orange-600">*</span>
                       </FormLabel>
-                      <FormControl className="border-2 border-primary rounded-md p-2">
+                      <FormControl
+                        className={`border-2 rounded-md p-2 ${
+                          isValidDepartment
+                            ? "border-green-500"
+                            : departmentNameError
+                            ? "border-red-500"
+                            : "border-primary"
+                        }`}
+                      >
                         <Input
-                          placeholder="e.g., Computer Science"
+                          placeholder="e.g., Class 5 or Class V"
                           {...field}
                         />
                       </FormControl>
+                      <div className="mt-2 flex items-center gap-2">
+                        {isValidDepartment && (
+                          <div className="flex items-center gap-1 text-green-600 text-sm">
+                            <CheckCircle2 className="w-4 h-4" />
+                            Valid department name
+                          </div>
+                        )}
+                        {departmentNameError && (
+                          <div className="flex items-center gap-1 text-red-600 text-sm">
+                            <AlertCircle className="w-4 h-4" />
+                            {departmentNameError}
+                          </div>
+                        )}
+                      </div>
                       <FormMessage />
+
+                      {/* Suggestions */}
+                      {departmentName && !isValidDepartment && (
+                        <div className="mt-4 p-3 bg-blue-50 rounded-md">
+                          <p className="text-sm font-semibold text-blue-900 mb-2">
+                            Valid Department Names:
+                          </p>
+                          <div className="grid grid-cols-2 gap-2">
+                            {Object.keys(VALID_DEPARTMENTS).map((name) => (
+                              <div
+                                key={name}
+                                className="text-sm text-blue-700 cursor-pointer hover:bg-blue-100 p-1 rounded"
+                                onClick={() => field.onChange(name)}
+                              >
+                                {name}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </FormItem>
                   )}
                 />
@@ -223,12 +323,19 @@ const DepartmentCreate = () => {
 
                 <Separator />
 
-                <Button type="submit" size="lg" className="w-full">
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full"
+                  disabled={isSubmitting || !isValidDepartment}
+                >
                   {isSubmitting ? (
                     <div className="flex gap-1">
                       <span>Creating Department...</span>
                       <Loader2 className="inline-block ml-2 animate-spin" />
                     </div>
+                  ) : !isValidDepartment ? (
+                    "Enter Valid Department Name"
                   ) : (
                     "Create Department"
                   )}
