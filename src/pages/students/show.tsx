@@ -230,7 +230,7 @@ const StudentShow = () => {
                                             onValueChange={setSelectedDepartment}
                                             disabled={loadingDepartments}
                                         >
-                                            <SelectTrigger disabled={loadingDepartments}>
+                                            <SelectTrigger className="border-primary" disabled={loadingDepartments}>
                                                 <SelectValue placeholder="Select a department" />
                                             </SelectTrigger>
                                             <SelectContent>
