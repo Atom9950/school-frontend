@@ -10,6 +10,7 @@ import { Department, Subject } from '@/types'
 import { useTable } from '@refinedev/react-table'
 import { ColumnDef } from '@tanstack/react-table'
 import { Search } from 'lucide-react'
+import { DeleteButton } from '@/components/refine-ui/buttons/delete'
 import React, { useEffect, useMemo, useState } from 'react'
 
 const SubjectList = () => {
@@ -90,8 +91,14 @@ const SubjectList = () => {
         size: 300,
         header: () => <p className='column-title'>Description</p>,
         cell: ({ getValue}) => <span className='truncate line-clamp-2'>{getValue<string>()}</span>,
+      },
+      {
+        id: 'delete',
+        size: 100,
+        header: () => <p className='column-title'>Action</p>,
+        cell: ({ row }) => <DeleteButton resource="subjects" recordItemId={row.original.id} size="sm" />
       }
-    ], []),
+      ], []),
     refineCoreProps: {
       resource: 'subjects',
       pagination: {
