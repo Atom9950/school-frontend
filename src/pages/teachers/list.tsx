@@ -121,7 +121,7 @@ const TeacherList = () => {
       {
         id: 'delete',
         size: 100,
-        header: () => <p className='column-title'>Delete</p>,
+        header: () => <p className='column-title'>Actions</p>,
         cell: ({ row }) => <DeleteButton resource='users' recordItemId={row.original.id} variant='destructive' size='sm' />
       }
     ], []),
