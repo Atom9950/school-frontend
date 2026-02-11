@@ -88,10 +88,24 @@ const Create = () => {
 
     const departments = departmentsQuery?.data?.data || [];
     const departmentsLoading = departmentsQuery.isLoading;
-    const subjects = subjectsQuery?.data?.data || [];
+    const allSubjects = subjectsQuery?.data?.data || [];
     const subjectsLoading = subjectsQuery.isLoading;
-    const teachers = teachersQuery?.data?.data || [];
+    const allTeachers = teachersQuery?.data?.data || [];
     const teachersLoading = teachersQuery.isLoading;
+
+    const selectedDepartmentId = form.watch('departmentId');
+
+    // Filter subjects by selected department
+    const filteredSubjects = selectedDepartmentId
+        ? allSubjects.filter(subject => subject.departmentId === selectedDepartmentId)
+        : [];
+
+    // Filter teachers by selected department
+    const filteredTeachers = selectedDepartmentId
+        ? allTeachers.filter(teacher => 
+            teacher.departments?.some(dept => dept.id === selectedDepartmentId)
+          )
+        : [];
 
     const bannerPublicId = form.watch('bannerCldPubId');
     const setBannerImage = (file: any, field: any) => {
@@ -226,15 +240,15 @@ const Create = () => {
                                                         field.onChange(Number(value))
                                                     }
                                                     value={field.value?.toString()}
-                                                    disabled={subjectsLoading}
+                                                    disabled={subjectsLoading || !selectedDepartmentId}
                                                 >
                                                     <FormControl className='border-2 border-primary rounded-md p-2'>
                                                         <SelectTrigger className="w-full">
-                                                            <SelectValue placeholder="Select a subject" />
+                                                            <SelectValue placeholder={selectedDepartmentId ? "Select a subject" : "Select a department first"} />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        {subjects.map((subject) => (
+                                                        {filteredSubjects.map((subject) => (
                                                             <SelectItem
                                                                 key={subject.id}
                                                                 value={subject.id.toString()}
@@ -260,15 +274,15 @@ const Create = () => {
                                                 <Select
                                                     onValueChange={field.onChange}
                                                     value={field.value}
-                                                    disabled={teachersLoading}
+                                                    disabled={teachersLoading || !selectedDepartmentId}
                                                 >
                                                     <FormControl className='border-2 border-primary rounded-md p-2'>
                                                         <SelectTrigger className="w-full">
-                                                            <SelectValue placeholder="Select a teacher" />
+                                                            <SelectValue placeholder={selectedDepartmentId ? "Select a teacher" : "Select a department first"} />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        {teachers.map((teacher) => (
+                                                        {filteredTeachers.map((teacher) => (
                                                             <SelectItem
                                                                 key={teacher.id}
                                                                 value={teacher.id.toString()}
