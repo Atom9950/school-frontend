@@ -48,21 +48,27 @@ const TeacherList = () => {
     fetchDepartments()
   }, [])
 
-  const departmentFilters = selectedDepartment === "all" ? [] : [
+  const permanentFilters = useMemo(() => [
     {
-      field: 'department',
-      operator: 'eq'as const,
-      value: selectedDepartment
-    }
-  ]
-
-  const searchFilters = searchQuery ? [
-    {
-      field: 'name',
-      operator: 'contains' as const,
-      value: searchQuery
-    }
-  ] : [];
+      field: 'role',
+      operator: 'eq' as const,
+      value: 'teacher'
+    },
+    ...(selectedDepartment !== "all" ? [
+      {
+        field: 'department',
+        operator: 'eq' as const,
+        value: selectedDepartment
+      }
+    ] : []),
+    ...(searchQuery ? [
+      {
+        field: 'name',
+        operator: 'contains' as const,
+        value: searchQuery
+      }
+    ] : [])
+  ], [selectedDepartment, searchQuery])
 
   const teacherTable = useTable<User>({
     columns: useMemo<ColumnDef<User>[]>(() => [
@@ -132,15 +138,7 @@ const TeacherList = () => {
         mode: 'server',
       },
       filters: {
-        permanent: [
-          {
-            field: 'role',
-            operator: 'eq' as const,
-            value: 'teacher'
-          },
-          ...departmentFilters, 
-          ...searchFilters
-        ],
+        permanent: permanentFilters,
       },
       sorters: {
         initial: [
@@ -150,7 +148,6 @@ const TeacherList = () => {
           }
         ]
       },
-
     }
   })
   return (
