@@ -2,22 +2,26 @@ import {ListView} from "@/components/refine-ui/views/list-view.tsx";
 import {Breadcrumb} from "@/components/refine-ui/layout/breadcrumb.tsx";
 import {Search} from "lucide-react";
 import {Input} from "@/components/ui/input.tsx";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {CreateButton} from "@/components/refine-ui/buttons/create.tsx";
 import {DataTable} from "@/components/refine-ui/data-table/data-table.tsx";
 import {useTable} from "@refinedev/react-table";
-import {ClassDetails, Subject, User} from "@/types";
+import {ClassDetails, Department, Subject, User} from "@/types";
 import {ColumnDef} from "@tanstack/react-table";
 import {Badge} from "@/components/ui/badge.tsx";
 import {useList} from "@refinedev/core";
 import {ShowButton} from "@/components/refine-ui/buttons/show.tsx";
 import {DeleteButton} from "@/components/refine-ui/buttons/delete.tsx";
+import {BACKEND_BASE_URL} from "@/constants";
 
 const ClassesList = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedSubject, setSelectedSubject] = useState('all');
     const [selectedTeacher, setSelectedTeacher] = useState('all');
+    const [selectedDepartment, setSelectedDepartment] = useState('all');
+    const [departments, setDepartments] = useState<Department[]>([]);
+    const [loadingDepartments, setLoadingDepartments] = useState(true);
 
     const { query: subjectsQuery } = useList<Subject>({
         resource: 'subjects',
@@ -30,6 +34,30 @@ const ClassesList = () => {
         pagination: { pageSize: 100 }
     });
 
+    useEffect(() => {
+        const fetchDepartments = async () => {
+            try {
+                setLoadingDepartments(true);
+                const baseUrl = BACKEND_BASE_URL.endsWith('/')
+                    ? BACKEND_BASE_URL.slice(0, -1)
+                    : BACKEND_BASE_URL;
+                const url = `${baseUrl}/departments`;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch departments');
+                }
+                const result = await response.json();
+                setDepartments(result.data || []);
+            } catch (error) {
+                console.error('Error fetching departments:', error);
+            } finally {
+                setLoadingDepartments(false);
+            }
+        };
+
+        fetchDepartments();
+    }, []);
+
     const subjects = subjectsQuery?.data?.data || [];
     const teachers = teachersQuery?.data?.data || [];
 
@@ -38,6 +66,9 @@ const ClassesList = () => {
     ];
     const teacherFilters = selectedTeacher === 'all' ? [] : [
         { field: 'teacher', operator: 'eq' as const, value: selectedTeacher}
+    ];
+    const departmentFilters = selectedDepartment === 'all' ? [] : [
+        { field: 'department', operator: 'eq' as const, value: selectedDepartment}
     ];
     const searchFilters = searchQuery ? [
         { field: 'name', operator: 'contains' as const, value: searchQuery }
@@ -121,7 +152,7 @@ const ClassesList = () => {
             resource: 'classes',
             pagination: { pageSize: 10, mode: 'server' },
             filters: {
-                permanent: [...subjectFilters, ...teacherFilters, ...searchFilters]
+                permanent: [...subjectFilters, ...teacherFilters, ...departmentFilters, ...searchFilters]
             },
             sorters: {
                 initial: [
@@ -154,46 +185,67 @@ const ClassesList = () => {
                     </div>
 
                     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                        <Select
-                            value={selectedSubject} onValueChange={setSelectedSubject}
-                        >
-                            <SelectTrigger className="w-[180px] !border-primary">
-                                <SelectValue placeholder="Filter by subject" />
-                            </SelectTrigger>
+                         <Select
+                             value={selectedSubject} onValueChange={setSelectedSubject}
+                         >
+                             <SelectTrigger className="w-[180px] !border-primary">
+                                 <SelectValue placeholder="Filter by subject" />
+                             </SelectTrigger>
 
-                            <SelectContent>
-                                <SelectItem value="all">
-                                    All Subjects
-                                </SelectItem>
-                                {subjects.map(subject => (
-                                    <SelectItem key={subject.id} value={subject.name}>
-                                        {subject.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                             <SelectContent>
+                                 <SelectItem value="all">
+                                     All Subjects
+                                 </SelectItem>
+                                 {subjects.map(subject => (
+                                     <SelectItem key={subject.id} value={subject.name}>
+                                         {subject.name}
+                                     </SelectItem>
+                                 ))}
+                             </SelectContent>
+                         </Select>
 
-                        <Select
-                            value={selectedTeacher} onValueChange={setSelectedTeacher}
-                        >
-                            <SelectTrigger className="w-[180px] !border-primary">
-                                <SelectValue placeholder="Filter by teacher" />
-                            </SelectTrigger>
+                         <Select
+                             value={selectedTeacher} onValueChange={setSelectedTeacher}
+                         >
+                             <SelectTrigger className="w-[180px] !border-primary">
+                                 <SelectValue placeholder="Filter by teacher" />
+                             </SelectTrigger>
 
-                            <SelectContent>
-                                <SelectItem value="all">
-                                    All Teachers
-                                </SelectItem>
-                                {teachers.map(teacher => (
-                                    <SelectItem key={teacher.id} value={teacher.name}>
-                                        {teacher.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                             <SelectContent>
+                                 <SelectItem value="all">
+                                     All Teachers
+                                 </SelectItem>
+                                 {teachers.map(teacher => (
+                                     <SelectItem key={teacher.id} value={teacher.name}>
+                                         {teacher.name}
+                                     </SelectItem>
+                                 ))}
+                             </SelectContent>
+                         </Select>
 
-                        <CreateButton resource="classes" />
-                    </div>
+                         <Select
+                             value={selectedDepartment}
+                             onValueChange={(value) => setSelectedDepartment(value)}
+                         >
+                             <SelectTrigger className="w-[180px] !border-primary">
+                                 <SelectValue placeholder="Filter by department" />
+                             </SelectTrigger>
+
+                             <SelectContent>
+                                 <SelectItem value="all">All Departments</SelectItem>
+                                 {!loadingDepartments && departments.map(department => (
+                                     <SelectItem
+                                         key={department.id}
+                                         value={String(department.id)}
+                                     >
+                                         {department.name}
+                                     </SelectItem>
+                                 ))}
+                             </SelectContent>
+                         </Select>
+
+                         <CreateButton resource="classes" />
+                     </div>
                 </div>
             </div>
 
