@@ -1,4 +1,5 @@
-import { useSession, signOut } from "@/lib/auth-client";
+import { useAuth } from "@/lib/use-auth";
+import { signOut } from "@/lib/auth-client";
 import { useNavigate } from "react-router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 const Settings = () => {
-  const { data: session, isPending } = useSession();
+  const { session, isLoading } = useAuth();
   const navigate = useNavigate();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
@@ -28,7 +29,7 @@ const Settings = () => {
     navigate("/login");
   };
 
-  if (isPending) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p className="text-muted-foreground">Loading...</p>
