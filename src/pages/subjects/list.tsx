@@ -48,7 +48,7 @@ const SubjectList = () => {
   const departmentFilters = selectedDepartment === "all" ? [] : [
     {
       field: 'department',
-      operator: 'eq'as const,
+      operator: 'eq' as const,
       value: selectedDepartment
     }
   ]
@@ -153,13 +153,13 @@ const SubjectList = () => {
               <SelectContent>
                 <SelectItem value="all">All Departments</SelectItem>
                 {!loadingDepartments && departments.map(department => (
-                  <SelectItem 
-                    key={department.id} 
-                    value={department.name}
-                  >
-                    {department.name}
-                  </SelectItem>
-                ))}
+                    <SelectItem 
+                      key={department.id} 
+                      value={String(department.id)}
+                    >
+                      {department.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
 

@@ -32,6 +32,67 @@ const DepartmentShow = () => {
   // Get teachers from department data (fetched from backend)
   const departmentTeachers = department?.teachers || [];
 
+  // Setup subjects table with department filter
+  const subjectDepartmentFilter = department?.id ? [
+    { field: 'department', operator: 'eq' as const, value: String(department.id) }
+  ] : [];
+
+  const subjectsTable = useTable<Subject>({
+    columns: useMemo<ColumnDef<Subject>[]>(() => [
+      {
+        id: 'code', 
+        accessorKey: 'code', 
+        size: 100, 
+        header: () => <p className='column-title ml-2 '>Code</p>,
+        cell: ({ getValue}) => {
+          const Badge = ({ children }: { children: React.ReactNode }) => (
+            <span className='inline-block px-2 py-1 text-xs font-semibold bg-primary text-primary-foreground rounded'>{children}</span>
+          );
+          return <Badge>{getValue<string>()}</Badge>;
+        }
+      },
+      {
+        id: 'name',
+        accessorKey: 'name',
+        size: 200,
+        header: () => <p className='column-title'>Name</p>,
+        cell: ({ getValue}) => <span className='text-foreground'>{getValue<string>()}</span>,
+        filterFn: 'includesString'
+      },
+      {
+        id: 'description',
+        accessorKey: 'description',
+        size: 300,
+        header: () => <p className='column-title'>Description</p>,
+        cell: ({ getValue}) => <span className='truncate line-clamp-2'>{getValue<string>()}</span>,
+      },
+      {
+        id: 'delete',
+        size: 100,
+        header: () => <p className='column-title'>Action</p>,
+        cell: ({ row }) => <DeleteButton resource="subjects" recordItemId={String(row.original.id)} variant='destructive' size='sm' />
+      }
+    ], []),
+    refineCoreProps: {
+      resource: 'subjects',
+      pagination: {
+        pageSize: 10,
+        mode: 'server',
+      },
+      filters: {
+        permanent: subjectDepartmentFilter,
+      },
+      sorters: {
+        initial: [
+          {
+            field: 'id',
+            order: 'desc'
+          }
+        ]
+      },
+    }
+  })
+
   // Setup teachers table with department filter
   const departmentIdFilter = department?.id ? [
     { field: 'department', operator: 'eq' as const, value: String(department.id) }
@@ -289,22 +350,9 @@ const DepartmentShow = () => {
 
         <Separator/>
 
-         <div className='subject'>
-           <p>Associated Subjects ({departmentSubjects.length})</p>
-          
-          {departmentSubjects.length > 0 ? (
-            <div className='space-y-3'>
-              {departmentSubjects.map((subject) => (
-                <div key={subject.id} className='p-3 border rounded-md bg-secondary/10'>
-                  <p className='text-lg font-bold text-primary'>{subject.name}</p>
-                  <p className='text-sm text-muted-foreground'>Code: {subject.code}</p>
-                  <p className='text-sm text-muted-foreground mt-2 leading-relaxed'>{subject.description}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className='text-sm text-muted-foreground'>No subjects available for this department</p>
-          )}
+        <div className='subjects'>
+          <p className='text-xs font-bold text-muted-foreground uppercase tracking-wider mb-5'>Associated Subjects</p>
+          <DataTable table={subjectsTable}/>
         </div>
       </Card>
     </ShowView>
