@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 import { InputPassword } from "@/components/refine-ui/form/input-password";
 import { Button } from "@/components/ui/button";
@@ -20,21 +21,21 @@ import {
   useLink,
   useNotification,
   useRefineOptions,
-  useRegister,
 } from "@refinedev/core";
+import { signUp } from "@/lib/auth-client";
 
 export const SignUpForm = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const { open } = useNotification();
-
   const Link = useLink();
+  const navigate = useNavigate();
 
   const { title } = useRefineOptions();
-
-  const { mutate: register } = useRegister();
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,21 +51,32 @@ export const SignUpForm = () => {
       return;
     }
 
-    register({
-      email,
-      password,
+    setIsLoading(true);
+    const { error } = await signUp.email({ name, email, password });
+    if (error) {
+      open?.({
+        type: "error",
+        message: error.message || "Sign up failed",
+      });
+    } else {
+      navigate("/login");
+    }
+    setIsLoading(false);
+  };
+
+  const handleSignUpWithGoogle = async () => {
+    // TODO: Implement OAuth with Better Auth when configured
+    open?.({
+      type: "error",
+      message: "Google sign-up not yet configured",
     });
   };
 
-  const handleSignUpWithGoogle = () => {
-    register({
-      providerName: "google",
-    });
-  };
-
-  const handleSignUpWithGitHub = () => {
-    register({
-      providerName: "github",
+  const handleSignUpWithGitHub = async () => {
+    // TODO: Implement OAuth with Better Auth when configured
+    open?.({
+      type: "error",
+      message: "GitHub sign-up not yet configured",
     });
   };
 
@@ -94,10 +106,9 @@ export const SignUpForm = () => {
         <CardHeader className={cn("px-0")}>
           <CardTitle
             className={cn(
-              "text-green-600",
-              "dark:text-green-400",
+              "text-primary",
               "text-3xl",
-              "font-semibold"
+              "font-bold"
             )}
           >
             Sign up
@@ -114,8 +125,22 @@ export const SignUpForm = () => {
         <CardContent className={cn("px-0")}>
           <form onSubmit={handleSignUp}>
             <div className={cn("flex", "flex-col", "gap-2")}>
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                className="border-primary"
+                id="name"
+                type="text"
+                placeholder=""
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+
+            <div className={cn("flex", "flex-col", "gap-2", "mt-6")}>
               <Label htmlFor="email">Email</Label>
               <Input
+                className="border-primary"
                 id="email"
                 type="email"
                 placeholder=""
@@ -130,6 +155,7 @@ export const SignUpForm = () => {
             >
               <Label htmlFor="password">Password</Label>
               <InputPassword
+                className="border-primary"
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -142,6 +168,7 @@ export const SignUpForm = () => {
             >
               <Label htmlFor="confirmPassword">Confirm password</Label>
               <InputPassword
+                className="border-primary"
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -155,15 +182,15 @@ export const SignUpForm = () => {
               className={cn(
                 "w-full",
                 "mt-6",
-                "bg-green-600",
-                "hover:bg-green-700",
+                "bg-primary",
                 "text-white"
               )}
+              disabled={isLoading}
             >
-              Sign up
+              {isLoading ? "Signing up..." : "Sign up"}
             </Button>
 
-            <div className={cn("flex", "items-center", "gap-4", "mt-6")}>
+            {/* <div className={cn("flex", "items-center", "gap-4", "mt-6")}>
               <Separator className={cn("flex-1")} />
               <span className={cn("text-sm", "text-muted-foreground")}>or</span>
               <Separator className={cn("flex-1")} />
@@ -214,7 +241,7 @@ export const SignUpForm = () => {
                   <div>GitHub</div>
                 </Button>
               </div>
-            </div>
+            </div> */}
           </form>
         </CardContent>
 
@@ -228,8 +255,7 @@ export const SignUpForm = () => {
             <Link
               to="/login"
               className={cn(
-                "text-blue-600",
-                "dark:text-blue-400",
+                "text-primary",
                 "font-semibold",
                 "underline"
               )}

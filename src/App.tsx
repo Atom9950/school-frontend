@@ -13,7 +13,7 @@ import { useNotificationProvider } from "./components/refine-ui/notification/use
 import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
 import { dataProvider } from "./providers/data";
 import Dashboard from "./pages/dashboard";
-import { BookOpen, GraduationCap, Home, Building2, Users, School, Users2 } from "lucide-react";
+import { BookOpen, GraduationCap, Home, Building2, Users, School, Users2, Settings as SettingsIcon } from "lucide-react";
 import { Layout } from "./components/refine-ui/layout/layout";
 import SubjectList from "./pages/subjects/list";
 import SubjectCreate from "./pages/subjects/create";
@@ -29,6 +29,9 @@ import TeacherCreate from "./pages/teachers/create";
 import StudentsList from "./pages/students/list";
 import StudentCreate from "./pages/students/create";
 import StudentShow from "./pages/students/show";
+import { ProtectedRoute } from "./components/protected-route";
+import { SignInForm } from "./components/refine-ui/form/sign-in-form";
+import Settings from "./pages/settings";
 
 
 function App() {
@@ -94,15 +97,23 @@ function App() {
                     create: '/students/create',
                     show: '/students/show/:id',
                     meta: { label: 'Students', icon: <Users /> }
+                  },
+                {
+                    name: 'settings',
+                    list: '/settings',
+                    meta: { label: 'Settings', icon: <SettingsIcon /> }
                   }
                 ]}
             >
               <Routes>
+                <Route path="/login" element={<SignInForm />} />
                 <Route element=
                 {
-                  <Layout>
-                    <Outlet />
-                  </Layout>
+                  <ProtectedRoute>
+                    <Layout>
+                      <Outlet />
+                    </Layout>
+                  </ProtectedRoute>
                 }>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="departments">
@@ -129,6 +140,7 @@ function App() {
                     <Route path="create" element={<StudentCreate />} />
                     <Route path="show/:id" element={<StudentShow />} />
                   </Route>
+                  <Route path="settings" element={<Settings />} />
                   </Route>
               </Routes>
               <Toaster />

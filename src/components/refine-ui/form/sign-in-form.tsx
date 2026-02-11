@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 import { CircleHelp } from "lucide-react";
 
@@ -19,37 +20,54 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { useLink, useLogin, useRefineOptions } from "@refinedev/core";
+import { useLink, useNotification, useRefineOptions } from "@refinedev/core";
+import { signIn } from "@/lib/auth-client";
 
 export const SignInForm = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const Link = useLink();
+  const navigate = useNavigate();
+  const { open } = useNotification();
 
   const { title } = useRefineOptions();
 
-  const { mutate: login } = useLogin();
-
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    login({
-      email,
+    const { error } = await signIn.email({ 
+      email, 
       password,
+      rememberMe 
+    });
+    if (error) {
+      open?.({
+        type: "error",
+        message: error.message || "Sign in failed",
+      });
+    } else {
+      navigate("/");
+    }
+    setIsLoading(false);
+  };
+
+  const handleSignInWithGoogle = async () => {
+    // TODO: Implement OAuth with Better Auth when configured
+    open?.({
+      type: "error",
+      message: "Google sign-in not yet configured",
     });
   };
 
-  const handleSignInWithGoogle = () => {
-    login({
-      providerName: "google",
-    });
-  };
-
-  const handleSignInWithGitHub = () => {
-    login({
-      providerName: "github",
+  const handleSignInWithGitHub = async () => {
+    // TODO: Implement OAuth with Better Auth when configured
+    open?.({
+      type: "error",
+      message: "GitHub sign-in not yet configured",
     });
   };
 
@@ -65,6 +83,8 @@ export const SignInForm = () => {
         "min-h-svh"
       )}
     >
+
+      <Card className={cn("sm:w-[456px]", "p-12", "mt-6")}>
       <div className={cn("flex", "items-center", "justify-center")}>
         {title.icon && (
           <div
@@ -74,15 +94,12 @@ export const SignInForm = () => {
           </div>
         )}
       </div>
-
-      <Card className={cn("sm:w-[456px]", "p-12", "mt-6")}>
         <CardHeader className={cn("px-0")}>
           <CardTitle
             className={cn(
-              "text-blue-600",
-              "dark:text-blue-400",
               "text-3xl",
-              "font-semibold"
+              "font-bold",
+              "text-primary",
             )}
           >
             Sign in
@@ -98,9 +115,10 @@ export const SignInForm = () => {
 
         <CardContent className={cn("px-0")}>
           <form onSubmit={handleSignIn}>
-            <div className={cn("flex", "flex-col", "gap-2")}>
+            <div className={cn("flex", "flex-col", "gap-2", "border-primary")}>
               <Label htmlFor="email">Email</Label>
               <Input
+                className="border-primary"
                 id="email"
                 type="email"
                 placeholder=""
@@ -114,6 +132,7 @@ export const SignInForm = () => {
             >
               <Label htmlFor="password">Password</Label>
               <InputPassword
+                className="border-primary"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -130,6 +149,7 @@ export const SignInForm = () => {
             >
               <div className={cn("flex items-center", "space-x-2")}>
                 <Checkbox
+                  className="border-primary"
                   id="remember"
                   checked={rememberMe}
                   onCheckedChange={(checked) =>
@@ -138,7 +158,7 @@ export const SignInForm = () => {
                 />
                 <Label htmlFor="remember">Remember me</Label>
               </div>
-              <Link
+              {/* <Link
                 to="/forgot-password"
                 className={cn(
                   "text-sm",
@@ -152,14 +172,14 @@ export const SignInForm = () => {
               >
                 <span>Forgot password</span>
                 <CircleHelp className={cn("w-4", "h-4")} />
-              </Link>
+              </Link> */}
             </div>
 
-            <Button type="submit" size="lg" className={cn("w-full", "mt-6")}>
-              Sign in
+            <Button type="submit" size="lg" className={cn("w-full", "mt-6")} disabled={isLoading}>
+              {isLoading ? "Signing in..." : "Sign in"}
             </Button>
 
-            <div className={cn("flex", "items-center", "gap-4", "mt-6")}>
+            {/* <div className={cn("flex", "items-center", "gap-4", "mt-6")}>
               <Separator className={cn("flex-1")} />
               <span className={cn("text-sm", "text-muted-foreground")}>or</span>
               <Separator className={cn("flex-1")} />
@@ -212,30 +232,9 @@ export const SignInForm = () => {
                   <div>GitHub</div>
                 </Button>
               </div>
-            </div>
+            </div> */}
           </form>
         </CardContent>
-
-        <Separator />
-
-        <CardFooter>
-          <div className={cn("w-full", "text-center text-sm")}>
-            <span className={cn("text-sm", "text-muted-foreground")}>
-              No account?{" "}
-            </span>
-            <Link
-              to="/register"
-              className={cn(
-                "text-green-600",
-                "dark:text-green-400",
-                "font-semibold",
-                "underline"
-              )}
-            >
-              Sign up
-            </Link>
-          </div>
-        </CardFooter>
       </Card>
     </div>
   );
