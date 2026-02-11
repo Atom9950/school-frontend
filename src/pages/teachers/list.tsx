@@ -189,7 +189,7 @@ const TeacherList = () => {
                 {!loadingDepartments && departments.map(department => (
                   <SelectItem 
                     key={department.id} 
-                    value={department.name}
+                    value={String(department.id)}
                   >
                     {department.name}
                   </SelectItem>
