@@ -5,8 +5,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { User, Department } from "@/types";
-import { useShow, useNavigation } from "@refinedev/core";
+import { User, Department, ClassDetails } from "@/types";
+import { useShow, useNavigation, useList } from "@refinedev/core";
 import {
   useReactTable,
   getCoreRowModel,
@@ -24,6 +24,139 @@ import {
 } from "@/components/ui/table";
 import { useMemo } from "react";
 import React from "react";
+
+interface ClassesTableProps {
+  classIds: string[];
+  show: (resource: string, id: string) => void;
+}
+
+const ClassesTable = ({ classIds, show }: ClassesTableProps) => {
+  const { query } = useList<ClassDetails>({
+    resource: "classes",
+    pagination: { pageSize: 100 },
+  });
+
+  const allClasses = query.data?.data || [];
+  const classes = allClasses.filter((cls) => classIds.includes(String(cls.id)));
+
+  const classColumns = useMemo<ColumnDef<ClassDetails>[]>(
+    () => [
+      {
+        id: "bannerUrl",
+        accessorKey: "bannerUrl",
+        size: 80,
+        header: () => <p className="column-title ml-2">Banner</p>,
+        cell: ({ getValue }) => (
+          <div className="flex items-center justify-start ml-2 py-2">
+            <img
+              src={getValue<string>() || "/placeholder-class.png"}
+              alt="Class Banner"
+              className="w-10 h-10 rounded object-cover"
+            />
+          </div>
+        ),
+      },
+      {
+        id: "name",
+        accessorKey: "name",
+        size: 200,
+        header: () => <p className="column-title">Class Name</p>,
+        cell: ({ getValue }) => (
+          <span className="text-foreground font-medium">
+            {getValue<string>()}
+          </span>
+        ),
+      },
+      {
+        id: "status",
+        accessorKey: "status",
+        size: 100,
+        header: () => <p className="column-title">Status</p>,
+        cell: ({ getValue }) => {
+          const status = getValue<string>();
+          return (
+            <Badge variant={status === "active" ? "default" : "secondary"}>
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </Badge>
+          );
+        },
+      },
+      {
+        id: "subject",
+        accessorKey: "subject.name",
+        size: 150,
+        header: () => <p className="column-title">Subject</p>,
+        cell: ({ row }) => (
+          <span className="text-foreground">
+            {row.original.subject?.name || "-"}
+          </span>
+        ),
+      },
+      {
+        id: "capacity",
+        accessorKey: "capacity",
+        size: 100,
+        header: () => <p className="column-title">Capacity</p>,
+        cell: ({ getValue }) => (
+          <span className="text-foreground">{getValue<number>()}</span>
+        ),
+      },
+      {
+        id: "details",
+        size: 140,
+        header: () => <p className="column-title">Details</p>,
+        cell: ({ row }) => (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => show("classes", String(row.original.id))}
+          >
+            View
+          </Button>
+        ),
+      },
+    ],
+    [show],
+  );
+
+  const classesTable = useReactTable({
+    data: classes,
+    columns: classColumns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return (
+    <Table>
+      <TableHeader>
+        {classesTable.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <TableHead key={header.id}>
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+              </TableHead>
+            ))}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        {classesTable.getRowModel().rows.map((row) => (
+          <TableRow key={row.id}>
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+};
 
 const TeacherShow = () => {
   const { query } = useShow<User>({
@@ -282,24 +415,21 @@ const TeacherShow = () => {
 
         <Separator />
 
-        {classes && classes.length > 0 && (
-          <>
-            <div className="subject">
-              <p>Allocated Classes</p>
-
-              <div>
-                {classes.map((cls) => (
-                  <div key={cls.id} className="mb-3">
-                    <p className="font-semibold">{cls.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {cls.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
+        <div className="classes">
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-5">
+            Allocated Classes
+          </p>
+          {classes && classes.length > 0 ? (
+            <ClassesTable
+              classIds={classes.map((c) => String(c.id))}
+              show={show}
+            />
+          ) : (
+            <div className="flex items-center justify-center py-8">
+              <p className="text-muted-foreground">No classes allocated</p>
             </div>
-          </>
-        )}
+          )}
+        </div>
       </Card>
     </ShowView>
   );
