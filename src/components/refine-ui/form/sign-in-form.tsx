@@ -40,27 +40,32 @@ const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
   setIsLoading(true);
 
   try {
-    const { error } = await signIn.email({ 
+    const result = await signIn.email({ 
       email, 
       password,
       rememberMe 
     });
-    
-    if (error) {
+
+    if (result?.error) {
       open?.({
         type: "error",
-        message: error.message || "Sign in failed",
+        message: result.error.message || "Sign in failed",
       });
       setIsLoading(false);
       return;
     }
 
-    // Wait longer for session to propagate
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Log for debugging
+    console.log("Sign in successful:", result);
+
+    // Give a moment for storage to complete, then redirect
+    await new Promise(resolve => setTimeout(resolve, 300));
     
-    // Force a hard navigation to ensure session is checked
+    // Use window.location for a full page reload to ensure session loads
     window.location.href = "/";
-  } catch (err) {
+    
+  } catch (error) {
+    console.error("Sign in error:", error);
     open?.({
       type: "error",
       message: "An unexpected error occurred",
