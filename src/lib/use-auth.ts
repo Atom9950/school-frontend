@@ -33,38 +33,60 @@ export function useAuth() {
     try {
       const token = localStorage.getItem("better_auth_token");
       
-      if (!token) {
-        setSession(null);
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/auth/get-session-with-token`,
+      // Try cookie-based session first (Better Auth default)
+      let response = await fetch(
+        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/auth/get-session`,
         {
           method: "GET",
           credentials: "include",
           headers: {
-            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Session validation failed");
+      // If cookies work, use that
+      if (response.ok) {
+        const data = await response.json();
+        if (data?.user) {
+          // Store token if we got one in the response
+          if (data?.session?.token) {
+            localStorage.setItem("better_auth_token", data.session.token);
+          }
+          setSession(data);
+          setIsLoading(false);
+          return;
+        }
       }
 
-      const data = await response.json();
-      
-      if (data && data.user) {
-        setSession(data);
-      } else {
-        // Token invalid, clear it
-        localStorage.removeItem("better_auth_token");
-        localStorage.removeItem("better_auth_session");
-        setSession(null);
+      // Fallback: try token-based auth if we have a token
+      if (token) {
+        response = await fetch(
+          `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/auth/get-session-with-token`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data?.user) {
+            setSession(data);
+            setIsLoading(false);
+            return;
+          }
+        }
       }
+
+      // No valid session found
+      localStorage.removeItem("better_auth_token");
+      localStorage.removeItem("better_auth_session");
+      setSession(null);
     } catch (err) {
       console.error("Session check error:", err);
       setError(err as Error);
