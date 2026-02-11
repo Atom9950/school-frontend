@@ -35,27 +35,39 @@ export const SignInForm = () => {
 
   const { title } = useRefineOptions();
 
-  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
+const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setIsLoading(true);
 
+  try {
     const { error } = await signIn.email({ 
       email, 
       password,
       rememberMe 
     });
+    
     if (error) {
       open?.({
         type: "error",
         message: error.message || "Sign in failed",
       });
       setIsLoading(false);
-    } else {
-      // Wait for session to be set before navigating
-      await new Promise(resolve => setTimeout(resolve, 500));
-      navigate("/");
+      return;
     }
-  };
+
+    // Wait longer for session to propagate
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Force a hard navigation to ensure session is checked
+    window.location.href = "/";
+  } catch (err) {
+    open?.({
+      type: "error",
+      message: "An unexpected error occurred",
+    });
+    setIsLoading(false);
+  }
+};
 
   const handleSignInWithGoogle = async () => {
     // TODO: Implement OAuth with Better Auth when configured
