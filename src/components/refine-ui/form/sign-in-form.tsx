@@ -49,10 +49,12 @@ export const SignInForm = () => {
         type: "error",
         message: error.message || "Sign in failed",
       });
+      setIsLoading(false);
     } else {
+      // Wait for session to be set before navigating
+      await new Promise(resolve => setTimeout(resolve, 500));
       navigate("/");
     }
-    setIsLoading(false);
   };
 
   const handleSignInWithGoogle = async () => {
@@ -83,8 +85,6 @@ export const SignInForm = () => {
         "min-h-svh"
       )}
     >
-
-      <Card className={cn("sm:w-[456px]", "p-12", "mt-6")}>
       <div className={cn("flex", "items-center", "justify-center")}>
         {title.icon && (
           <div
@@ -94,6 +94,8 @@ export const SignInForm = () => {
           </div>
         )}
       </div>
+
+      <Card className={cn("sm:w-[456px]", "p-12", "mt-6")}>
         <CardHeader className={cn("px-0")}>
           <CardTitle
             className={cn(
