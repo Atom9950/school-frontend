@@ -3,7 +3,8 @@ import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { DataTable } from '@/components/refine-ui/data-table/data-table';
 import { DeleteButton } from '@/components/refine-ui/buttons/delete';
-import { Department, Subject, User } from '@/types'
+import { Badge } from '@/components/ui/badge';
+import { Department, Subject, User, ClassDetails } from '@/types'
 import { useShow, useList, useNavigation } from '@refinedev/core'
 import { useTable } from '@refinedev/react-table'
 import { ColumnDef } from '@tanstack/react-table'
@@ -286,6 +287,111 @@ const DepartmentShow = () => {
     }
   })
 
+  // Setup classes table with department filter
+  const classesFilter = department?.id ? [
+    { field: 'department', operator: 'eq' as const, value: String(department.id) }
+  ] : [];
+
+  const classesTable = useTable<ClassDetails>({
+    columns: useMemo<ColumnDef<ClassDetails>[]>(() => [
+      {
+        id: 'bannerUrl',
+        accessorKey: 'bannerUrl',
+        size: 80,
+        header: () => <p className='column-title ml-2'>Banner</p>,
+        cell: ({ getValue }) => (
+          <div className='flex items-center justify-center ml-2'>
+            <img
+              src={getValue<string>() || '/placeholder-class.png'}
+              alt='Class Banner'
+              className='w-10 h-10 rounded object-cover'
+            />
+          </div>
+        )
+      },
+      {
+        id: 'name',
+        accessorKey: 'name',
+        size: 200,
+        header: () => <p className='column-title'>Class Name</p>,
+        cell: ({ getValue }) => <span className='text-foreground font-medium'>{getValue<string>()}</span>,
+      },
+      {
+        id: 'status',
+        accessorKey: 'status',
+        size: 100,
+        header: () => <p className='column-title'>Status</p>,
+        cell: ({ getValue }) => {
+          const status = getValue<string>();
+          return (
+            <Badge variant={status === 'active' ? 'default' : 'secondary'}>
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </Badge>
+          );
+        }
+      },
+      {
+        id: 'subject',
+        accessorKey: 'subject.name',
+        size: 150,
+        header: () => <p className='column-title'>Subject</p>,
+        cell: ({ getValue }) => <span className='text-foreground'>{getValue<string>()}</span>,
+      },
+      {
+        id: 'teacher',
+        accessorKey: 'teacher.name',
+        size: 150,
+        header: () => <p className='column-title'>Teacher</p>,
+        cell: ({ getValue }) => <span className='text-foreground'>{getValue<string>()}</span>,
+      },
+      {
+        id: 'capacity',
+        accessorKey: 'capacity',
+        size: 100,
+        header: () => <p className='column-title'>Capacity</p>,
+        cell: ({ getValue }) => <span className='text-foreground'>{getValue<number>()}</span>,
+      },
+      {
+        id: 'details',
+        size: 140,
+        header: () => <p className='column-title'>Details</p>,
+        cell: ({ row }) => (
+          <Button 
+            variant='ghost' 
+            size='sm'
+            onClick={() => show('classes', row.original.id)}
+          >
+            View
+          </Button>
+        ),
+      },
+      {
+        id: 'delete',
+        size: 140,
+        header: () => <p className='column-title'>Actions</p>,
+        cell: ({ row }) => <DeleteButton resource='classes' recordItemId={String(row.original.id)} variant='destructive' size='sm' />
+      }
+    ], [show]),
+    refineCoreProps: {
+      resource: 'classes',
+      pagination: {
+        pageSize: 10,
+        mode: 'server',
+      },
+      filters: {
+        permanent: classesFilter,
+      },
+      sorters: {
+        initial: [
+          {
+            field: 'id',
+            order: 'desc'
+          }
+        ]
+      },
+    }
+  })
+
   if(isLoading || isError || !department) {
     return(
       <ShowView className='department-view department-show'>
@@ -353,6 +459,13 @@ const DepartmentShow = () => {
         <div className='subjects'>
           <p className='text-xs font-bold text-muted-foreground uppercase tracking-wider mb-5'>Associated Subjects</p>
           <DataTable table={subjectsTable}/>
+        </div>
+
+        <Separator/>
+
+        <div className='classes'>
+          <p className='text-xs font-bold text-muted-foreground uppercase tracking-wider mb-5'>Associated Classes</p>
+          <DataTable table={classesTable}/>
         </div>
       </Card>
     </ShowView>
