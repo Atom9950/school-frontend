@@ -46,6 +46,8 @@ const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
       rememberMe 
     });
 
+    console.log("Sign in result:", result);
+
     if (result?.error) {
       open?.({
         type: "error",
@@ -57,6 +59,36 @@ const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
 
     // Log for debugging
     console.log("Sign in successful:", result);
+
+    // If no token was stored, try to get the session directly after sign-in
+    const storedToken = localStorage.getItem("better_auth_token");
+    if (!storedToken) {
+      console.log("No token stored, fetching session...");
+      try {
+        const sessionResponse = await fetch(
+          `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/auth/get-session-with-token`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        
+        if (sessionResponse.ok) {
+          const sessionData = await sessionResponse.json();
+          console.log("Session data:", sessionData);
+          
+          if (sessionData?.session?.token) {
+            localStorage.setItem("better_auth_token", sessionData.session.token);
+            console.log("Token stored from session response");
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch session:", err);
+      }
+    }
 
     // Give a moment for storage to complete, then redirect
     await new Promise(resolve => setTimeout(resolve, 300));

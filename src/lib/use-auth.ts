@@ -40,7 +40,7 @@ export function useAuth() {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/auth/get-session`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/auth/get-session-with-token`,
         {
           method: "GET",
           credentials: "include",
