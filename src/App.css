@@ -750,7 +750,7 @@
             }
         }
 
-        .teachers {
+        /* .teachers {
             @apply space-y-2;
 
             > p {
@@ -772,7 +772,7 @@
                     @apply text-sm text-muted-foreground mt-2 leading-relaxed;
                 }
             }
-        }
+        } */
 
         /* .students {
             @apply space-y-2;

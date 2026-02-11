@@ -32,6 +32,99 @@ const DepartmentShow = () => {
   // Get teachers from department data (fetched from backend)
   const departmentTeachers = department?.teachers || [];
 
+  // Setup teachers table with department filter
+  const departmentIdFilter = department?.id ? [
+    { field: 'department', operator: 'eq' as const, value: String(department.id) }
+  ] : [];
+
+  const teachersTable = useTable<User>({
+    columns: useMemo<ColumnDef<User>[]>(() => [
+      {
+        id: 'image',
+        accessorKey: 'image',
+        size: 80,
+        header: () => <p className='column-title ml-2'>Photo</p>,
+        cell: ({ getValue }) => (
+          <div className='flex items-center justify-center ml-2'>
+            <img
+              src={getValue<string>() || '/placeholder-user.png'}
+              alt='Teacher Photo'
+              className='w-10 h-10 rounded-full object-cover'
+            />
+          </div>
+        )
+      },
+      {
+        id: 'name',
+        accessorKey: 'name',
+        size: 200,
+        header: () => <p className='column-title'>Name</p>,
+        cell: ({ getValue}) => <span className='text-foreground'>{getValue<string>()}</span>,
+        filterFn: 'includesString'
+      },
+      {
+        id: 'email',
+        accessorKey: 'email',
+        size: 250,
+        header: () => <p className='column-title'>Email</p>,
+        cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>()}</span>,
+      },
+      {
+        id: 'phoneNumber',
+        accessorKey: 'phoneNumber',
+        size: 150,
+        header: () => <p className='column-title'>Phone Number</p>,
+        cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>() || 'N/A'}</span>,
+      },
+      {
+        id: 'actions',
+        accessorKey: 'id',
+        size: 100,
+        header: () => <p className='column-title'>Details</p>,
+        cell: ({ getValue}) => (
+          <Button 
+            variant='ghost' 
+            size='sm'
+            onClick={() => show('teachers', getValue<string>())}
+          >
+            View
+          </Button>
+        ),
+      },
+      {
+        id: 'delete',
+        size: 100,
+        header: () => <p className='column-title'>Actions</p>,
+        cell: ({ row }) => <DeleteButton resource='users' recordItemId={row.original.id} variant='destructive' size='sm' />
+      }
+    ], [show]),
+    refineCoreProps: {
+      resource: 'users',
+      pagination: {
+        pageSize: 10,
+        mode: 'server',
+      },
+      filters: {
+        permanent: [
+          {
+            field: 'role',
+            operator: 'eq' as const,
+            value: 'teacher'
+          },
+          ...departmentIdFilter
+        ],
+      },
+      sorters: {
+        initial: [
+          {
+            field: 'id',
+            order: 'desc'
+          }
+        ]
+      },
+    }
+  })
+
   // Setup students table with department filter
   const departmentFilters = department?.name ? [
     { field: 'department', operator: 'eq' as const, value: department.name }
@@ -183,42 +276,8 @@ const DepartmentShow = () => {
         <Separator/>
 
         <div className='teachers'>
-          <p>Associated Teachers ({departmentTeachers.length})</p>
-          
-          {departmentTeachers.length > 0 ? (
-            <div className='space-y-3'>
-              {departmentTeachers.map((teacher) => {
-                const teacherInitials = teacher.name
-                  .split(' ')
-                  .filter(Boolean)
-                  .slice(0, 2)
-                  .map((part) => part[0].toLocaleUpperCase())
-                  .join('');
-                const placeholderUrl = `https://placehold.co/100x100?text=${encodeURIComponent(teacherInitials || 'NA')}`;
-
-                return (
-                  <div key={teacher.id} className='p-3 border rounded-md bg-secondary/10'>
-                    <div className='flex items-center gap-3'>
-                      <img
-                        src={teacher.image ?? placeholderUrl}
-                        alt={teacher.name}
-                        className='w-12 h-12 rounded-full object-cover'
-                      />
-                      <div className='flex-1'>
-                        <p className='text-lg font-bold text-primary'>{teacher.name}</p>
-                        <p className='text-sm text-muted-foreground'>{teacher.email}</p>
-                        {teacher.phoneNumber && (
-                          <p className='text-sm text-muted-foreground'>{teacher.phoneNumber}</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className='text-sm text-muted-foreground'>No teachers assigned to this department</p>
-          )}
+          <p className='text-xs font-bold text-muted-foreground uppercase tracking-wider mb-5'>Associated Teachers</p>
+          <DataTable table={teachersTable}/>
         </div>
 
         <Separator/>
