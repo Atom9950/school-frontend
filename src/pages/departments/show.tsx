@@ -1,14 +1,21 @@
 import { ShowView, ShowViewHeader } from '@/components/refine-ui/views/show-view';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { DataTable } from '@/components/refine-ui/data-table/data-table';
+import { DeleteButton } from '@/components/refine-ui/buttons/delete';
 import { Department, Subject, User } from '@/types'
-import { useShow, useList } from '@refinedev/core'
+import { useShow, useList, useNavigation } from '@refinedev/core'
+import { useTable } from '@refinedev/react-table'
+import { ColumnDef } from '@tanstack/react-table'
 import { AdvancedImage } from '@cloudinary/react';
-import { Building2 } from 'lucide-react';
+import { Building2, Eye } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { bannerPhoto } from '@/lib/cloudinary';
+import { useMemo } from 'react';
 
 const DepartmentShow = () => {
   const { query } = useShow<Department>({resource: 'departments'});
+  const { show } = useNavigation();
   
   const department = query.data?.data;
   const {isLoading, isError} = query
@@ -24,6 +31,106 @@ const DepartmentShow = () => {
 
   // Get teachers from department data (fetched from backend)
   const departmentTeachers = department?.teachers || [];
+
+  // Setup students table with department filter
+  const departmentFilters = department?.name ? [
+    { field: 'department', operator: 'eq' as const, value: department.name }
+  ] : [];
+
+  const studentsTable = useTable<any>({
+    columns: useMemo<ColumnDef<any>[]>(() => [
+      {
+        id: 'image',
+        accessorKey: 'image',
+        size: 80,
+        header: () => <p className='column-title ml-2'>Photo</p>,
+        cell: ({ getValue }) => (
+          <div className='flex items-center justify-center ml-2'>
+            <img
+              src={getValue<string>() || '/placeholder-user.png'}
+              alt='Student Photo'
+              className='w-10 h-10 rounded-full object-cover'
+            />
+          </div>
+        )
+      },
+      {
+        id: 'name',
+        accessorKey: 'name',
+        size: 200,
+        header: () => <p className='column-title'>Name</p>,
+        cell: ({ getValue}) => <span className='text-foreground'>{getValue<string>()}</span>,
+        filterFn: 'includesString'
+      },
+      {
+        id: 'phoneNumber',
+        accessorKey: 'phoneNumber',
+        size: 150,
+        header: () => <p className='column-title'>Phone Number</p>,
+        cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>() || 'N/A'}</span>,
+      },
+      {
+        id: 'gender',
+        accessorKey: 'gender',
+        size: 120,
+        header: () => <p className='column-title'>Gender</p>,
+        cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>() || 'N/A'}</span>,
+      },
+      {
+        id: 'age',
+        accessorKey: 'age',
+        size: 80,
+        header: () => <p className='column-title'>Age</p>,
+        cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>() || 'N/A'}</span>,
+      },
+      {
+        id: 'rollNumber',
+        accessorKey: 'rollNumber',
+        size: 120,
+        header: () => <p className='column-title'>Roll Number</p>,
+        cell: ({ getValue}) => <span className='text-foreground text-sm'>{getValue<string>() || 'N/A'}</span>,
+      },
+      {
+        id: 'actions',
+        accessorKey: 'id',
+        size: 100,
+        header: () => <p className='column-title'>Details</p>,
+        cell: ({ getValue}) => (
+          <Button 
+            variant='ghost' 
+            size='sm'
+            onClick={() => show('students', getValue<string>())}
+          >
+            View
+          </Button>
+        ),
+      },
+      {
+        id: 'delete',
+        size: 100,
+        header: () => <p className='column-title'>Actions</p>,
+        cell: ({ row }) => <DeleteButton resource='students' recordItemId={row.original.id} variant='destructive' size='sm' />
+      }
+    ], [show]),
+    refineCoreProps: {
+      resource: 'students',
+      pagination: {
+        pageSize: 10,
+        mode: 'server',
+      },
+      filters: {
+        permanent: departmentFilters,
+      },
+      sorters: {
+        initial: [
+          {
+            field: 'id',
+            order: 'desc'
+          }
+        ]
+      },
+    }
+  })
 
   if(isLoading || isError || !department) {
     return(
@@ -116,8 +223,15 @@ const DepartmentShow = () => {
 
         <Separator/>
 
-        <div className='subject'>
-          <p>Associated Subjects ({departmentSubjects.length})</p>
+        <div className='students'>
+          <p className='text-xs font-bold text-muted-foreground uppercase tracking-wider mb-5'>Associated Students</p>
+          <DataTable table={studentsTable}/>
+        </div>
+
+        <Separator/>
+
+         <div className='subject'>
+           <p>Associated Subjects ({departmentSubjects.length})</p>
           
           {departmentSubjects.length > 0 ? (
             <div className='space-y-3'>
