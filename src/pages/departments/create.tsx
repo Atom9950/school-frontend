@@ -3,7 +3,8 @@ import { CreateView } from "@/components/refine-ui/views/create-view";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useBack, useList } from "@refinedev/core";
+import { useBack, useList, useShow } from "@refinedev/core";
+import { useParams } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "@refinedev/react-hook-form";
 import { departmentSchema } from "@/lib/schema";
@@ -28,7 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import UploadWidget from "@/components/upload-widget";
 import { User } from "@/types";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 // Generate valid departments with sections A-Z
 const generateValidDepartments = () => {
@@ -41,7 +42,20 @@ const generateValidDepartments = () => {
 
   // Add Class 1-12 with Roman numerals and sections A-Z
   const classNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  const romanNumerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+  const romanNumerals = [
+    "I",
+    "II",
+    "III",
+    "IV",
+    "V",
+    "VI",
+    "VII",
+    "VIII",
+    "IX",
+    "X",
+    "XI",
+    "XII",
+  ];
   const sections = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
   classNumbers.forEach((num, index) => {
@@ -66,6 +80,17 @@ const VALID_DEPARTMENTS = generateValidDepartments();
 
 const DepartmentCreate = () => {
   const back = useBack();
+  const { id } = useParams();
+  const isEditMode = !!id;
+
+  const { query: departmentQuery } = useShow({
+    resource: "departments",
+    id: id!,
+    queryOptions: {
+      enabled: isEditMode,
+    },
+  });
+
   const [departmentNameError, setDepartmentNameError] = useState<string | null>(
     null,
   );
@@ -75,8 +100,19 @@ const DepartmentCreate = () => {
     resolver: zodResolver(departmentSchema),
     refineCoreProps: {
       resource: "departments",
-      action: "create",
+      action: isEditMode ? "edit" : "create",
+      id: isEditMode ? id : undefined,
     },
+    defaultValues: isEditMode
+      ? {
+          name: departmentQuery.data?.data?.name || "",
+          description: departmentQuery.data?.data?.description || "",
+          bannerUrl: departmentQuery.data?.data?.bannerUrl || "",
+          bannerCldPubId: departmentQuery.data?.data?.bannerCldPubId || "",
+          headTeacherId:
+            departmentQuery.data?.data?.headTeacherId?.toString() || "",
+        }
+      : undefined,
   });
 
   const {
@@ -85,7 +121,22 @@ const DepartmentCreate = () => {
     formState: { isSubmitting, errors },
     control,
     watch,
+    reset,
   } = form;
+
+  // Reset form with department data when in edit mode and data is loaded
+  useEffect(() => {
+    if (isEditMode && departmentQuery.data?.data) {
+      reset({
+        name: departmentQuery.data.data.name,
+        description: departmentQuery.data.data.description,
+        bannerUrl: departmentQuery.data.data.bannerUrl,
+        bannerCldPubId: departmentQuery.data.data.bannerCldPubId,
+        headTeacherId:
+          departmentQuery.data.data.headTeacherId?.toString() || "",
+      });
+    }
+  }, [isEditMode, departmentQuery.data, reset]);
 
   const departmentName = watch("name");
 
@@ -156,9 +207,15 @@ const DepartmentCreate = () => {
     <CreateView className="department-view">
       <Breadcrumb />
 
-      <h1 className="page-title">Create a Department</h1>
+      <h1 className="page-title">
+        {isEditMode ? "Edit Department" : "Create a Department"}
+      </h1>
       <div className="intro-row">
-        <p>Provide the required information below to add a department.</p>
+        <p>
+          {isEditMode
+            ? "Update the department information below."
+            : "Provide the required information below to add a department."}
+        </p>
         <Button onClick={() => back()}>Go Back</Button>
       </div>
 
@@ -334,11 +391,17 @@ const DepartmentCreate = () => {
                 >
                   {isSubmitting ? (
                     <div className="flex gap-1">
-                      <span>Creating Department...</span>
+                      <span>
+                        {isEditMode
+                          ? "Updating Department..."
+                          : "Creating Department..."}
+                      </span>
                       <Loader2 className="inline-block ml-2 animate-spin" />
                     </div>
                   ) : !isValidDepartment ? (
                     "Enter Valid Department Name"
+                  ) : isEditMode ? (
+                    "Update Department"
                   ) : (
                     "Create Department"
                   )}
