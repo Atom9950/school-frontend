@@ -114,10 +114,10 @@ const Settings = () => {
               </div>
             </div>
 
-            <Separator />
+            {/* <Separator /> */}
 
             {/* Email Verification Status */}
-            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+            {/* <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
               <div>
                 <p className="text-sm font-medium">Email Verification</p>
                 <p className="text-xs text-muted-foreground">
@@ -132,7 +132,7 @@ const Settings = () => {
               )}>
                 {admin.emailVerified ? "Verified" : "Unverified"}
               </div>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>

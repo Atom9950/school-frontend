@@ -97,6 +97,8 @@ const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
         "min-h-svh"
       )}
     >
+
+      <Card className={cn("sm:w-[456px]", "p-12", "mt-6")}>
       <div className={cn("flex", "items-center", "justify-center")}>
         {title.icon && (
           <div
@@ -106,22 +108,20 @@ const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
           </div>
         )}
       </div>
-
-      <Card className={cn("sm:w-[456px]", "p-12", "mt-6")}>
-        <CardHeader className={cn("px-0")}>
+        <CardHeader className={cn("px-0", "text-center")}>
           <CardTitle
             className={cn(
               "text-3xl",
               "font-bold",
-              "text-primary",
+              "text-foreground",
             )}
           >
-            Sign in
+            CampusFlow
           </CardTitle>
           <CardDescription
-            className={cn("text-muted-foreground", "font-medium")}
+            className={cn("text-muted-foreground", "font-medium", "text-base")}
           >
-            Welcome back
+            Sign in to access your dashboard
           </CardDescription>
         </CardHeader>
 
@@ -135,7 +135,7 @@ const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
                 className="border-primary"
                 id="email"
                 type="email"
-                placeholder=""
+                placeholder="john@example.com"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -148,6 +148,7 @@ const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
               <InputPassword
                 className="border-primary"
                 value={password}
+                placeholder="......"
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
