@@ -91,6 +91,7 @@ function App() {
                     name: 'teachers',
                     list: '/teachers',
                     create: '/teachers/create',
+                    edit: '/teachers/edit/:id',
                     show: '/teachers/show/:id',
                     meta: { label: 'Teachers', icon: <Users2 /> }
                   },
@@ -139,6 +140,7 @@ function App() {
                  <Route path="teachers">
                     <Route index element={<TeacherList />} />
                     <Route path="create" element={<TeacherCreate />} />
+                    <Route path="edit/:id" element={<TeacherCreate />} />
                     <Route path="show/:id" element={<TeacherShow />} />
                   </Route>
                   <Route path="students">

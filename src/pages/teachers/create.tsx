@@ -3,12 +3,19 @@ import { CreateView } from '@/components/refine-ui/views/create-view'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { useBack, useList, useGo } from '@refinedev/core'
-import React from 'react'
+import { useBack, useList, useGo, useShow } from '@refinedev/core'
+import { useParams } from 'react-router'
+import React, { useEffect } from 'react'
 import {zodResolver} from '@hookform/resolvers/zod'
 import { useForm } from "@refinedev/react-hook-form";
 import { teacherSchema } from '@/lib/schema'
 import * as z from 'zod'
+
+// Allow optional images in edit mode
+const teacherSchemaEdit = teacherSchema.extend({
+    bannerUrl: z.string().optional(),
+    bannerCldPubId: z.string().optional(),
+});
 import {
     Form,
     FormControl,
@@ -26,12 +33,23 @@ import { Department } from '@/types'
 const Create = () => {
     const back = useBack();
     const go = useGo();
+    const { id } = useParams();
+    const isEditMode = !!id;
+
+    const { query: teacherQuery } = useShow({
+        resource: "teachers",
+        id: id!,
+        queryOptions: {
+            enabled: isEditMode,
+        },
+    });
 
     const form = useForm({
-        resolver: zodResolver(teacherSchema),
+        resolver: zodResolver(isEditMode ? teacherSchemaEdit : teacherSchema),
         refineCoreProps: {
             resource: "teachers",
-            action: "create",
+            action: isEditMode ? "edit" : "create",
+            id: isEditMode ? id : undefined,
             redirect: false,
         },
         defaultValues: {
@@ -49,46 +67,88 @@ const Create = () => {
         },
     });
 
+    useEffect(() => {
+        if (isEditMode && teacherQuery.data?.data) {
+            const teacher = teacherQuery.data.data;
+            
+            // Format date to YYYY-MM-DD for input type="date"
+            let formattedDate = "";
+            if (teacher.joiningDate) {
+                const date = new Date(teacher.joiningDate);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                formattedDate = `${year}-${month}-${day}`;
+                console.log("Setting joining date to:", formattedDate);
+            }
+            
+            // Use setValue for each field to properly update the form
+            form.setValue("name", teacher.name || "");
+            form.setValue("email", teacher.email || "");
+            form.setValue("address", teacher.address || "");
+            form.setValue("age", teacher.age || undefined);
+            form.setValue("gender", teacher.gender || undefined);
+            form.setValue("joiningDate", formattedDate, { shouldValidate: true, shouldDirty: true });
+            form.setValue("bannerUrl", teacher.image || "");
+            form.setValue("bio", teacher.bio || "");
+            form.setValue("phoneNumber", teacher.phoneNumber || "");
+            // Store department names for display in form
+            form.setValue("allocatedDepartments", teacher.departments?.map((d: any) => d.name) || []);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isEditMode, teacherQuery.data?.data]);
+
     const {
         handleSubmit,
         formState: { isSubmitting, errors },
         control,
     } = form;
 
-    const onSubmit = async (values: z.infer<typeof teacherSchema>) => {
+    const onSubmit = async (values: z.infer<typeof teacherSchema> | z.infer<typeof teacherSchemaEdit>) => {
         try {
-            console.log("Form submission values:", values);
             const apiUrl = import.meta.env.VITE_BACKEND_BASE_URL || 'http://localhost:4000';
-            const response = await fetch(`${apiUrl}users`, {
-                method: "POST",
+            const method = isEditMode ? "PUT" : "POST";
+            const endpoint = isEditMode ? `${apiUrl}users/${id}` : `${apiUrl}users`;
+            
+            // Ensure joining date is in correct format
+            let formattedJoiningDate = values.joiningDate;
+            if (typeof formattedJoiningDate === 'string' && formattedJoiningDate.includes('T')) {
+                formattedJoiningDate = formattedJoiningDate.split('T')[0];
+            }
+            
+            const payload = {
+                name: values.name,
+                email: values.email,
+                address: values.address,
+                age: values.age,
+                gender: values.gender,
+                joiningDate: formattedJoiningDate,
+                bannerUrl: values.bannerUrl,
+                bannerCldPubId: values.bannerCldPubId,
+                bio: values.bio,
+                phoneNumber: values.phoneNumber,
+                allocatedDepartments: values.allocatedDepartments || [],
+                role: "teacher"
+            };
+            
+            const response = await fetch(endpoint, {
+                method,
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    name: values.name,
-                    email: values.email,
-                    address: values.address,
-                    age: values.age,
-                    gender: values.gender,
-                    joiningDate: values.joiningDate,
-                    bannerUrl: values.bannerUrl,
-                    bannerCldPubId: values.bannerCldPubId,
-                    bio: values.bio,
-                    phoneNumber: values.phoneNumber,
-                    allocatedDepartments: values.allocatedDepartments,
-                    role: "teacher"
-                }),
+                body: JSON.stringify(payload),
             });
 
+            const responseData = await response.json();
+
             if (!response.ok) {
-                throw new Error("Failed to create teacher");
+                throw new Error(`Failed to ${isEditMode ? 'update' : 'create'} teacher: ${responseData.message || response.statusText}`);
             }
 
-            const data = await response.json();
-            console.log("Teacher created:", data);
             go({ to: { resource: "teachers", action: "list" } });
         } catch (error) {
-            console.error("Error creating teacher:", error);
+            console.error(`Error ${isEditMode ? 'updating' : 'creating'} teacher:`, error);
+            alert(`Error: ${error instanceof Error ? error.message : String(error)}`);
         }
     };
 
@@ -123,9 +183,9 @@ const Create = () => {
         <CreateView className="teacher-view">
             <Breadcrumb />
 
-            <h1 className="page-title">Create a Teacher</h1>
+            <h1 className="page-title">{isEditMode ? 'Edit Teacher' : 'Create a Teacher'}</h1>
             <div className="intro-row">
-                <p>Provide the required information below to add a teacher.</p>
+                <p>{isEditMode ? 'Update the teacher information below.' : 'Provide the required information below to add a teacher.'}</p>
                 <Button onClick={() => back()}>Go Back</Button>
             </div>
 
@@ -332,8 +392,11 @@ const Create = () => {
                                             <FormControl className='border-2 border-primary rounded-md p-2'>
                                                 <Input
                                                     type="date"
-                                                    value={field.value || ""}
-                                                    onChange={field.onChange}
+                                                    value={typeof field.value === 'string' && field.value.includes('T') 
+                                                        ? field.value.split('T')[0]
+                                                        : field.value || ""
+                                                    }
+                                                    onChange={(e) => field.onChange(e.target.value)}
                                                     onBlur={field.onBlur}
                                                     name={field.name}
                                                     ref={field.ref}
@@ -401,11 +464,11 @@ const Create = () => {
                                 <Button type="submit" size="lg" className="w-full">
                                     {isSubmitting ? (
                                         <div className="flex gap-1">
-                                            <span>Creating Teacher...</span>
+                                            <span>{isEditMode ? 'Updating Teacher...' : 'Creating Teacher...'}</span>
                                             <Loader2 className="inline-block ml-2 animate-spin" />
                                         </div>
                                     ) : (
-                                        "Create Teacher"
+                                        isEditMode ? "Update Teacher" : "Create Teacher"
                                     )}
                                 </Button>
                             </form>
