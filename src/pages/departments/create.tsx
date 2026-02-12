@@ -30,36 +30,39 @@ import UploadWidget from "@/components/upload-widget";
 import { User } from "@/types";
 import { useState, useMemo } from "react";
 
-const VALID_DEPARTMENTS = {
-  "Lower Nursery": 0,
-  "Upper Nursery": 1,
-  "KG-1": 2,
-  "KG-2": 3,
-  "Class 1": 4,
-  "Class I": 4,
-  "Class 2": 5,
-  "Class II": 5,
-  "Class 3": 6,
-  "Class III": 6,
-  "Class 4": 7,
-  "Class IV": 7,
-  "Class 5": 8,
-  "Class V": 8,
-  "Class 6": 9,
-  "Class VI": 9,
-  "Class 7": 10,
-  "Class VII": 10,
-  "Class 8": 11,
-  "Class VIII": 11,
-  "Class 9": 12,
-  "Class IX": 12,
-  "Class 10": 13,
-  "Class X": 13,
-  "Class 11": 14,
-  "Class XI": 14,
-  "Class 12": 15,
-  "Class XII": 15,
+// Generate valid departments with sections A-Z
+const generateValidDepartments = () => {
+  const departments: Record<string, number> = {
+    "Lower Nursery": 0,
+    "Upper Nursery": 1,
+    "KG-1": 2,
+    "KG-2": 3,
+  };
+
+  // Add Class 1-12 with Roman numerals and sections A-Z
+  const classNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  const romanNumerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+  const sections = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+  classNumbers.forEach((num, index) => {
+    const level = 3 + num;
+    const roman = romanNumerals[index];
+
+    // Base class (no section)
+    departments[`Class ${num}`] = level;
+    departments[`Class ${roman}`] = level;
+
+    // Classes with sections A-Z
+    sections.forEach((section) => {
+      departments[`Class ${num}${section}`] = level;
+      departments[`Class ${roman}${section}`] = level;
+    });
+  });
+
+  return departments;
 };
+
+const VALID_DEPARTMENTS = generateValidDepartments();
 
 const DepartmentCreate = () => {
   const back = useBack();

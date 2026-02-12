@@ -106,6 +106,10 @@ export type Department = {
     headTeacherId?: string;
     headTeacher?: User;
     teachers?: User[];
+    level?: number;
+    parentDepartmentId?: number;
+    parentDepartment?: Department;
+    sections?: Department[];
 };
 
 export type ClassDetails = {
