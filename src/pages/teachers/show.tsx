@@ -5,158 +5,14 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { DataTable } from "@/components/refine-ui/data-table/data-table";
 import { User, Department, ClassDetails } from "@/types";
-import { useShow, useNavigation, useList } from "@refinedev/core";
-import {
-  useReactTable,
-  getCoreRowModel,
-  ColumnDef,
-  flexRender,
-} from "@tanstack/react-table";
+import { useShow, useNavigation } from "@refinedev/core";
+import { useTable } from "@refinedev/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useMemo } from "react";
 import React from "react";
-
-interface ClassesTableProps {
-  classIds: string[];
-  show: (resource: string, id: string) => void;
-}
-
-const ClassesTable = ({ classIds, show }: ClassesTableProps) => {
-  const { query } = useList<ClassDetails>({
-    resource: "classes",
-    pagination: { pageSize: 100 },
-  });
-
-  const allClasses = query.data?.data || [];
-  const classes = allClasses.filter((cls) => classIds.includes(String(cls.id)));
-
-  const classColumns = useMemo<ColumnDef<ClassDetails>[]>(
-    () => [
-      {
-        id: "bannerUrl",
-        accessorKey: "bannerUrl",
-        size: 80,
-        header: () => <p className="column-title ml-2">Banner</p>,
-        cell: ({ getValue }) => (
-          <div className="flex items-center justify-start ml-2 py-2">
-            <img
-              src={getValue<string>() || "/placeholder-class.png"}
-              alt="Class Banner"
-              className="w-10 h-10 rounded object-cover"
-            />
-          </div>
-        ),
-      },
-      {
-        id: "name",
-        accessorKey: "name",
-        size: 200,
-        header: () => <p className="column-title">Class Name</p>,
-        cell: ({ getValue }) => (
-          <span className="text-foreground font-medium">
-            {getValue<string>()}
-          </span>
-        ),
-      },
-      {
-        id: "status",
-        accessorKey: "status",
-        size: 100,
-        header: () => <p className="column-title">Status</p>,
-        cell: ({ getValue }) => {
-          const status = getValue<string>();
-          return (
-            <Badge variant={status === "active" ? "default" : "secondary"}>
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-            </Badge>
-          );
-        },
-      },
-      {
-        id: "subject",
-        accessorKey: "subject.name",
-        size: 150,
-        header: () => <p className="column-title">Subject</p>,
-        cell: ({ row }) => (
-          <span className="text-foreground">
-            {row.original.subject?.name || "-"}
-          </span>
-        ),
-      },
-      {
-        id: "capacity",
-        accessorKey: "capacity",
-        size: 100,
-        header: () => <p className="column-title">Capacity</p>,
-        cell: ({ getValue }) => (
-          <span className="text-foreground">{getValue<number>()}</span>
-        ),
-      },
-      {
-        id: "details",
-        size: 140,
-        header: () => <p className="column-title">Details</p>,
-        cell: ({ row }) => (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => show("classes", String(row.original.id))}
-          >
-            View
-          </Button>
-        ),
-      },
-    ],
-    [show],
-  );
-
-  const classesTable = useReactTable({
-    data: classes,
-    columns: classColumns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-  return (
-    <Table>
-      <TableHeader>
-        {classesTable.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <TableHead key={header.id}>
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-              </TableHead>
-            ))}
-          </TableRow>
-        ))}
-      </TableHeader>
-      <TableBody>
-        {classesTable.getRowModel().rows.map((row) => (
-          <TableRow key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-};
 
 const TeacherShow = () => {
   const { query } = useShow<User>({
@@ -167,77 +23,213 @@ const TeacherShow = () => {
   const teacher = query.data?.data;
   const { isLoading, isError } = query;
 
-  // Use the departments array already loaded on the teacher object
-  const teacherDepartments = teacher?.departments || [];
+  // Get teacher ID for filtering departments and classes
+  const teacherId = teacher?.id ? String(teacher.id) : undefined;
+  console.log("Teacher ID:", teacherId);
+  console.log("Teacher data:", teacher);
 
-  // Setup departments table columns
-  const departmentColumns = useMemo<ColumnDef<Department>[]>(
-    () => [
-      {
-        id: "bannerUrl",
-        accessorKey: "bannerUrl",
-        size: 100,
-        header: () => <p className="column-title ml-2">Banner</p>,
-        cell: ({ getValue }) => {
-          const imageUrl = getValue<string>();
-          return (
+  const departmentFilters = teacherId
+    ? [
+        {
+          field: "id",
+          operator: "eq" as const,
+          value: teacherId,
+        },
+      ]
+    : [];
+
+  const classFilters = teacherId
+    ? [
+        {
+          field: "id",
+          operator: "eq" as const,
+          value: teacherId,
+        },
+      ]
+    : [];
+
+  // Setup departments table with filters based on teacher's departments
+  const departmentsTable = useTable<Department>({
+    columns: useMemo<ColumnDef<Department>[]>(
+      () => [
+        {
+          id: "bannerUrl",
+          accessorKey: "bannerUrl",
+          size: 100,
+          header: () => <p className="column-title ml-2">Banner</p>,
+          cell: ({ getValue }) => {
+            const imageUrl = getValue<string>();
+            return (
+              <div className="flex items-center justify-start ml-2 py-2">
+                <img
+                  src={imageUrl || "/placeholder-class.png"}
+                  alt="Department Banner"
+                  className="h-12 w-12 rounded object-cover"
+                />
+              </div>
+            );
+          },
+        },
+        {
+          id: "name",
+          accessorKey: "name",
+          size: 250,
+          header: () => <p className="column-title">Department Name</p>,
+          cell: ({ getValue }) => (
+            <div className="flex items-center gap-2">
+              <span className="text-foreground font-medium">
+                {getValue<string>()}
+              </span>
+            </div>
+          ),
+        },
+        {
+          id: "description",
+          accessorKey: "description",
+          size: 350,
+          header: () => <p className="column-title">Description</p>,
+          cell: ({ getValue }) => (
+            <span className="text-foreground text-sm">
+              {getValue<string>() || "-"}
+            </span>
+          ),
+        },
+        {
+          id: "details",
+          size: 140,
+          header: () => <p className="column-title">Details</p>,
+          cell: ({ row }) => (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => show("departments", String(row.original.id))}
+            >
+              View
+            </Button>
+          ),
+        },
+      ],
+      [show],
+    ),
+    refineCoreProps: {
+      resource: "departments",
+      pagination: {
+        pageSize: 10,
+        mode: "server",
+      },
+      filters: {
+        permanent: departmentFilters,
+      },
+      sorters: {
+        initial: [
+          {
+            field: "id",
+            order: "desc",
+          },
+        ],
+      },
+    },
+  });
+
+  // Setup classes table with filters based on teacher's classes
+  const classesTable = useTable<ClassDetails>({
+    columns: useMemo<ColumnDef<ClassDetails>[]>(
+      () => [
+        {
+          id: "bannerUrl",
+          accessorKey: "bannerUrl",
+          size: 80,
+          header: () => <p className="column-title ml-2">Banner</p>,
+          cell: ({ getValue }) => (
             <div className="flex items-center justify-start ml-2 py-2">
               <img
-                src={imageUrl || "/placeholder-class.png"}
-                alt="Department Banner"
-                className="h-12 w-12 rounded object-cover"
+                src={getValue<string>() || "/placeholder-class.png"}
+                alt="Class Banner"
+                className="w-10 h-10 rounded object-cover"
               />
             </div>
-          );
+          ),
         },
-      },
-      {
-        id: "name",
-        accessorKey: "name",
-        size: 250,
-        header: () => <p className="column-title">Department Name</p>,
-        cell: ({ getValue }) => (
-          <div className="flex items-center gap-2">
+        {
+          id: "name",
+          accessorKey: "name",
+          size: 200,
+          header: () => <p className="column-title">Class Name</p>,
+          cell: ({ getValue }) => (
             <span className="text-foreground font-medium">
               {getValue<string>()}
             </span>
-          </div>
-        ),
+          ),
+        },
+        {
+          id: "status",
+          accessorKey: "status",
+          size: 100,
+          header: () => <p className="column-title">Status</p>,
+          cell: ({ getValue }) => {
+            const status = getValue<string>();
+            return (
+              <Badge variant={status === "active" ? "default" : "secondary"}>
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </Badge>
+            );
+          },
+        },
+        {
+          id: "subject",
+          accessorKey: "subject.name",
+          size: 150,
+          header: () => <p className="column-title">Subject</p>,
+          cell: ({ row }) => (
+            <span className="text-foreground">
+              {row.original.subject?.name || "-"}
+            </span>
+          ),
+        },
+        {
+          id: "capacity",
+          accessorKey: "capacity",
+          size: 100,
+          header: () => <p className="column-title">Capacity</p>,
+          cell: ({ getValue }) => (
+            <span className="text-foreground">{getValue<number>()}</span>
+          ),
+        },
+        {
+          id: "details",
+          size: 140,
+          header: () => <p className="column-title">Details</p>,
+          cell: ({ row }) => (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => show("classes", String(row.original.id))}
+            >
+              View
+            </Button>
+          ),
+        },
+      ],
+      [show],
+    ),
+    refineCoreProps: {
+      resource: "classes",
+      pagination: {
+        pageSize: 10,
+        mode: "server",
       },
-      {
-        id: "description",
-        accessorKey: "description",
-        size: 350,
-        header: () => <p className="column-title">Description</p>,
-        cell: ({ getValue }) => (
-          <span className="text-foreground text-sm">
-            {getValue<string>() || "-"}
-          </span>
-        ),
+      filters: {
+        permanent: classFilters,
       },
-      {
-        id: "details",
-        size: 140,
-        header: () => <p className="column-title">Details</p>,
-        cell: ({ row }) => (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => show("departments", String(row.original.id))}
-          >
-            View
-          </Button>
-        ),
+      sorters: {
+        initial: [
+          {
+            field: "id",
+            order: "desc",
+          },
+        ],
       },
-    ],
-    [show],
-  );
-
-  // Create a local table using useReactTable
-  const departmentsTable = useReactTable({
-    data: teacherDepartments,
-    columns: departmentColumns,
-    getCoreRowModel: getCoreRowModel(),
+    },
   });
 
   if (isLoading || isError || !teacher) {
@@ -373,44 +365,7 @@ const TeacherShow = () => {
           <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-5">
             Associated Departments
           </p>
-          {teacherDepartments && teacherDepartments.length > 0 ? (
-            <Table>
-              <TableHeader>
-                {departmentsTable.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {departmentsTable.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <div className="flex items-center justify-center py-8">
-              <p className="text-muted-foreground">No departments allocated</p>
-            </div>
-          )}
+          <DataTable table={departmentsTable} />
         </div>
 
         <Separator />
@@ -419,16 +374,7 @@ const TeacherShow = () => {
           <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-5">
             Allocated Classes
           </p>
-          {classes && classes.length > 0 ? (
-            <ClassesTable
-              classIds={classes.map((c) => String(c.id))}
-              show={show}
-            />
-          ) : (
-            <div className="flex items-center justify-center py-8">
-              <p className="text-muted-foreground">No classes allocated</p>
-            </div>
-          )}
+          <DataTable table={classesTable} />
         </div>
       </Card>
     </ShowView>
