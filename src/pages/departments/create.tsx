@@ -136,7 +136,7 @@ const DepartmentCreate = () => {
           departmentQuery.data.data.headTeacherId?.toString() || "",
       });
     }
-  }, [isEditMode, departmentQuery.data, reset]);
+  }, [isEditMode, departmentQuery.data?.data?.id]);
 
   const departmentName = watch("name");
 

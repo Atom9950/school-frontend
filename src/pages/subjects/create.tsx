@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Breadcrumb } from "@/components/refine-ui/layout/breadcrumb";
 import { CreateView } from "@/components/refine-ui/views/create-view";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useBack, useList } from "@refinedev/core";
+import { useBack, useList, useShow } from "@refinedev/core";
+import { useParams } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "@refinedev/react-hook-form";
 import { subjectSchema } from "@/lib/schema";
@@ -32,13 +33,32 @@ import { Department } from "@/types";
 
 const SubjectCreate = () => {
   const back = useBack();
+  const { id } = useParams();
+  const isEditMode = !!id;
+
+  const { query: subjectQuery } = useShow({
+    resource: "subjects",
+    id: id!,
+    queryOptions: {
+      enabled: isEditMode,
+    },
+  });
 
   const form = useForm({
     resolver: zodResolver(subjectSchema),
     refineCoreProps: {
       resource: "subjects",
-      action: "create",
+      action: isEditMode ? "edit" : "create",
+      id: isEditMode ? id : undefined,
     },
+    defaultValues: isEditMode
+      ? {
+          name: subjectQuery.data?.data?.name || "",
+          code: subjectQuery.data?.data?.code || "",
+          description: subjectQuery.data?.data?.description || "",
+          department: subjectQuery.data?.data?.department?.name || "",
+        }
+      : undefined,
   });
 
   const {
@@ -46,7 +66,20 @@ const SubjectCreate = () => {
     handleSubmit,
     formState: { isSubmitting, errors },
     control,
+    reset,
   } = form;
+
+  // Reset form with subject data when in edit mode and data is loaded
+  useEffect(() => {
+    if (isEditMode && subjectQuery.data?.data) {
+      reset({
+        name: subjectQuery.data.data.name,
+        code: subjectQuery.data.data.code,
+        description: subjectQuery.data.data.description,
+        department: subjectQuery.data.data.department?.name || "",
+      });
+    }
+  }, [isEditMode, subjectQuery.data?.data?.id]);
 
   const onSubmit = async (values: z.infer<typeof subjectSchema>) => {
     try {
@@ -66,13 +99,45 @@ const SubjectCreate = () => {
   const departments = departmentsQuery?.data?.data || [];
   const departmentsLoading = departmentsQuery.isLoading;
 
+  // Ensure department field is set after departments are loaded
+  useEffect(() => {
+    if (
+      isEditMode &&
+      subjectQuery.data?.data?.department &&
+      !departmentsLoading &&
+      departments.length > 0
+    ) {
+      // Find if the department exists in the loaded departments
+      const deptExists = departments.some(
+        (d) => d.name === subjectQuery.data?.data?.department?.name,
+      );
+      if (deptExists) {
+        // Re-set the value to ensure it's properly reflected in the Select
+        form.setValue("department", subjectQuery.data.data.department.name, {
+          shouldValidate: true,
+        });
+      }
+    }
+  }, [
+    isEditMode,
+    departmentsLoading,
+    departments.length,
+    subjectQuery.data?.data?.id,
+  ]);
+
   return (
     <CreateView className="subject-view">
       <Breadcrumb />
 
-      <h1 className="page-title">Add New Subject</h1>
+      <h1 className="page-title">
+        {isEditMode ? "Edit Subject" : "Add New Subject"}
+      </h1>
       <div className="intro-row">
-        <p>Provide the required information below to add a new subject.</p>
+        <p>
+          {isEditMode
+            ? "Update the subject information below."
+            : "Provide the required information below to add a new subject."}
+        </p>
         <Button onClick={() => back()}>Go Back</Button>
       </div>
 
@@ -96,9 +161,9 @@ const SubjectCreate = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                       <FormLabel>
-                         Subject Name <span className="text-orange-600">*</span>
-                       </FormLabel>
+                      <FormLabel>
+                        Subject Name <span className="text-orange-600">*</span>
+                      </FormLabel>
                       <FormControl className="border-2 border-primary rounded-md p-2">
                         <Input
                           placeholder="e.g. Biology, Chemistry, Mathematics"
@@ -118,9 +183,9 @@ const SubjectCreate = () => {
                   name="code"
                   render={({ field }) => (
                     <FormItem>
-                       <FormLabel>
-                         Subject Code <span className="text-orange-600">*</span>
-                       </FormLabel>
+                      <FormLabel>
+                        Subject Code <span className="text-orange-600">*</span>
+                      </FormLabel>
                       <FormControl className="border-2 border-primary rounded-md p-2">
                         <Input
                           placeholder="e.g. BIO101, CHEM202, MATH301"
@@ -141,17 +206,20 @@ const SubjectCreate = () => {
                     name="department"
                     render={({ field }) => (
                       <FormItem>
-                         <FormLabel>
-                           Department <span className="text-orange-600">*</span>
-                         </FormLabel>
+                        <FormLabel>
+                          Department <span className="text-orange-600">*</span>
+                        </FormLabel>
                         <Select
                           onValueChange={field.onChange}
-                          value={field.value}
+                          value={field.value || ""}
                           disabled={departmentsLoading}
                         >
                           <FormControl className="border-2 border-primary rounded-md p-2">
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a department" />
+                              <SelectValue
+                                placeholder="Select a department"
+                                defaultValue={field.value}
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -176,9 +244,9 @@ const SubjectCreate = () => {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                       <FormLabel>
-                         Description <span className="text-orange-600">*</span>
-                       </FormLabel>
+                      <FormLabel>
+                        Description <span className="text-orange-600">*</span>
+                      </FormLabel>
                       <FormControl className="border-2 border-primary rounded-md p-2">
                         <Textarea
                           placeholder="Provide a brief description about this subject, what it covers, and its importance."
@@ -200,9 +268,15 @@ const SubjectCreate = () => {
                 <Button type="submit" size="lg" className="w-full">
                   {isSubmitting ? (
                     <div className="flex gap-2 items-center">
-                      <span>Creating Subject...</span>
+                      <span>
+                        {isEditMode
+                          ? "Updating Subject..."
+                          : "Creating Subject..."}
+                      </span>
                       <Loader2 className="w-4 h-4 animate-spin" />
                     </div>
+                  ) : isEditMode ? (
+                    "Update Subject"
                   ) : (
                     "Create Subject"
                   )}

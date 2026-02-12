@@ -73,11 +73,12 @@ function App() {
                    meta: { label: 'Departments', icon: <Building2 /> }
                  },
                 {
-                  name: 'subjects',
-                  list: '/subjects',
-                  create: '/subjects/create',
-                  meta: { label: 'Subjects', icon: <BookOpen /> }
-                },
+                   name: 'subjects',
+                   list: '/subjects',
+                   create: '/subjects/create',
+                   edit: '/subjects/edit/:id',
+                   meta: { label: 'Subjects', icon: <BookOpen /> }
+                 },
                 {
                    name: 'classes',
                    list: '/classes',
@@ -124,9 +125,10 @@ function App() {
                    <Route path="show/:id" element={<DepartmentShow />} />
                 </Route>
                 <Route path="subjects">
-                  <Route index element={<SubjectList />} />
-                  <Route path="create" element={<SubjectCreate />} />
-                </Route>
+                   <Route index element={<SubjectList />} />
+                   <Route path="create" element={<SubjectCreate />} />
+                   <Route path="edit/:id" element={<SubjectCreate />} />
+                 </Route>
                 <Route path="classes">
                    <Route index element={<ClassesList />} />
                    <Route path="create" element={<ClassesCreate />} />
