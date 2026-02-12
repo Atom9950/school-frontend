@@ -80,12 +80,13 @@ function App() {
                    meta: { label: 'Subjects', icon: <BookOpen /> }
                  },
                 {
-                   name: 'classes',
-                   list: '/classes',
-                   create: '/classes/create',
-                   show: '/classes/show/:id',
-                   meta: { label: 'Classes', icon: <GraduationCap /> }
-                 },
+                    name: 'classes',
+                    list: '/classes',
+                    create: '/classes/create',
+                    edit: '/classes/edit/:id',
+                    show: '/classes/show/:id',
+                    meta: { label: 'Classes', icon: <GraduationCap /> }
+                  },
                 {
                     name: 'teachers',
                     list: '/teachers',
@@ -132,6 +133,7 @@ function App() {
                 <Route path="classes">
                    <Route index element={<ClassesList />} />
                    <Route path="create" element={<ClassesCreate />} />
+                   <Route path="edit/:id" element={<ClassesCreate />} />
                    <Route path="show/:id" element={<ClassesShow />} /> {/* Placeholder for class details page */}
                  </Route>
                  <Route path="teachers">
