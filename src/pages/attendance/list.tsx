@@ -16,11 +16,13 @@ import { useTable } from "@refinedev/react-table";
 import { Attendance, ClassDetails } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
-import { useList } from "@refinedev/core";
+import { useList, useNavigation } from "@refinedev/core";
 import { DeleteButton } from "@/components/refine-ui/buttons/delete";
+import { ShowButton } from "@/components/refine-ui/buttons/show";
 import { BACKEND_BASE_URL } from "@/constants";
 
 const AttendanceList = () => {
+  const { show } = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchRollNumber, setSearchRollNumber] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("all");
@@ -79,7 +81,7 @@ const AttendanceList = () => {
         const result = await response.json();
         const filteredClasses = (result.data || []).filter(
           (cls: ClassDetails) =>
-            cls.department?.id === Number(selectedDepartment)
+            cls.department?.id === Number(selectedDepartment),
         );
         setClasses(filteredClasses);
         setSelectedClass("all");
@@ -126,11 +128,23 @@ const AttendanceList = () => {
     : [];
 
   const searchFilters = searchQuery
-    ? [{ field: "student.name", operator: "contains" as const, value: searchQuery }]
+    ? [
+        {
+          field: "student.name",
+          operator: "contains" as const,
+          value: searchQuery,
+        },
+      ]
     : [];
 
   const rollNumberFilters = searchRollNumber
-    ? [{ field: "student.rollNumber", operator: "contains" as const, value: searchRollNumber }]
+    ? [
+        {
+          field: "student.rollNumber",
+          operator: "contains" as const,
+          value: searchRollNumber,
+        },
+      ]
     : [];
 
   useEffect(() => {
@@ -140,7 +154,14 @@ const AttendanceList = () => {
     console.log("Date Filters:", dateFilters);
     console.log("Search Filters:", searchFilters);
     console.log("Roll Number Filters:", rollNumberFilters);
-  }, [selectedDepartment, selectedClass, selectedStatus, selectedDate, searchQuery, searchRollNumber]);
+  }, [
+    selectedDepartment,
+    selectedClass,
+    selectedStatus,
+    selectedDate,
+    searchQuery,
+    searchRollNumber,
+  ]);
 
   const attendanceColumns = useMemo<ColumnDef<Attendance>[]>(
     () => [
@@ -195,7 +216,10 @@ const AttendanceList = () => {
         header: () => <p className="column-title">Status</p>,
         cell: ({ getValue }) => {
           const status = getValue<string>();
-          const variantMap: Record<string, "default" | "secondary" | "destructive"> = {
+          const variantMap: Record<
+            string,
+            "default" | "secondary" | "destructive"
+          > = {
             present: "default",
             late: "secondary",
             absent: "destructive",
@@ -208,20 +232,32 @@ const AttendanceList = () => {
         },
       },
       {
-        id: "delete",
-        size: 100,
+        id: "actions",
+        size: 150,
         header: () => <p className="column-title">Actions</p>,
         cell: ({ row }) => (
-          <DeleteButton
-            resource="attendance"
-            recordItemId={row.original.id}
-            variant="destructive"
-            size="sm"
-          />
+          <div className="flex gap-2">
+            <ShowButton
+              resource="attendance"
+              recordItemId={String(
+                row.original.studentId || row.original.student?.id,
+              )}
+              variant="outline"
+              size="sm"
+            >
+              View Report
+            </ShowButton>
+            <DeleteButton
+              resource="attendance"
+              recordItemId={row.original.id}
+              variant="destructive"
+              size="sm"
+            />
+          </div>
         ),
       },
     ],
-    []
+    [],
   );
 
   const attendanceTable = useTable<Attendance>({

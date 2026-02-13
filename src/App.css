@@ -799,7 +799,8 @@
         } */
         }
         
-        .student-view {
+        .student-view,
+        .attendance-view {
         .state-message {
             @apply mt-6 text-sm text-muted-foreground;
         }
@@ -828,14 +829,29 @@
             @apply flex flex-col sm:flex-row sm:items-start justify-between gap-5 mb-4;
 
             > div:first-child {
-                @apply flex-1 space-y-2;
+                @apply flex items-center gap-4;
 
-                h1 {
-                    @apply text-xl sm:text-2xl font-bold;
+                img {
+                    @apply rounded-full object-cover flex-shrink-0;
+                    width: 5.75rem !important;
+                    height: 5.75rem !important;
+                    aspect-ratio: 1 !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    min-width: 5.75rem !important;
+                    min-height: 5.75rem !important;
                 }
 
-                p {
-                    @apply text-sm text-muted-foreground;
+                > div {
+                    @apply space-y-2;
+
+                    h1 {
+                        @apply text-xl sm:text-2xl font-bold;
+                    }
+
+                    p {
+                        @apply text-sm text-muted-foreground;
+                    }
                 }
             }
 
@@ -858,6 +874,10 @@
 
         .details-grid {
             @apply grid sm:grid-cols-3 mt-8 gap-10 text-sm;
+        }
+
+        .details-grid.grid-cols-4 {
+            @apply sm:grid-cols-4;
         }
 
         .instructor {

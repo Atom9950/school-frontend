@@ -32,6 +32,7 @@ import StudentShow from "./pages/students/show";
 import StudentEdit from "./pages/students/edit";
 import AttendanceList from "./pages/attendance/list";
 import AttendanceCreate from "./pages/attendance/create";
+import AttendanceShow from "./pages/attendance/show";
 import { ProtectedRoute } from "./components/protected-route";
 import { SignInForm } from "./components/refine-ui/form/sign-in-form";
 import Settings from "./pages/settings";
@@ -110,6 +111,7 @@ function App() {
                     name: 'attendance',
                     list: '/attendance',
                     create: '/attendance/create',
+                    show: '/attendance/show/:id',
                     meta: { label: 'Attendance', icon: <ClipboardList /> }
                   },
                 {
@@ -162,6 +164,7 @@ function App() {
                   <Route path="attendance">
                     <Route index element={<AttendanceList />} />
                     <Route path="create" element={<AttendanceCreate />} />
+                    <Route path="show/:id" element={<AttendanceShow />} />
                   </Route>
                   <Route path="settings" element={<Settings />} />
                   </Route>
