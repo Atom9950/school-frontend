@@ -13,7 +13,7 @@ import { useNotificationProvider } from "./components/refine-ui/notification/use
 import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
 import { dataProvider } from "./providers/data";
 import Dashboard from "./pages/dashboard";
-import { BookOpen, GraduationCap, Home, Building2, Users, School, Users2, Settings as SettingsIcon } from "lucide-react";
+import { BookOpen, GraduationCap, Home, Building2, Users, School, Users2, Settings as SettingsIcon, ClipboardList } from "lucide-react";
 import { Layout } from "./components/refine-ui/layout/layout";
 import SubjectList from "./pages/subjects/list";
 import SubjectCreate from "./pages/subjects/create";
@@ -30,6 +30,8 @@ import StudentsList from "./pages/students/list";
 import StudentCreate from "./pages/students/create";
 import StudentShow from "./pages/students/show";
 import StudentEdit from "./pages/students/edit";
+import AttendanceList from "./pages/attendance/list";
+import AttendanceCreate from "./pages/attendance/create";
 import { ProtectedRoute } from "./components/protected-route";
 import { SignInForm } from "./components/refine-ui/form/sign-in-form";
 import Settings from "./pages/settings";
@@ -105,6 +107,12 @@ function App() {
                     meta: { label: 'Students', icon: <Users /> }
                   },
                 {
+                    name: 'attendance',
+                    list: '/attendance',
+                    create: '/attendance/create',
+                    meta: { label: 'Attendance', icon: <ClipboardList /> }
+                  },
+                {
                     name: 'settings',
                     list: '/settings',
                     meta: { label: 'Settings', icon: <SettingsIcon /> }
@@ -150,6 +158,10 @@ function App() {
                     <Route path="create" element={<StudentCreate />} />
                     <Route path="edit/:id" element={<StudentEdit />} />
                     <Route path="show/:id" element={<StudentShow />} />
+                  </Route>
+                  <Route path="attendance">
+                    <Route index element={<AttendanceList />} />
+                    <Route path="create" element={<AttendanceCreate />} />
                   </Route>
                   <Route path="settings" element={<Settings />} />
                   </Route>

@@ -137,3 +137,23 @@ export type SignUpPayload = {
     imageCldPubId?: string;
     role: UserRole;
 };
+
+export type Attendance = {
+    id: number;
+    classId: number;
+    studentId: number;
+    date: string;
+    status: 'present' | 'absent' | 'late';
+    remarks?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    class?: {
+        id: number;
+        name: string;
+    };
+    student?: {
+        id: number;
+        name: string;
+        rollNumber?: string;
+    };
+};

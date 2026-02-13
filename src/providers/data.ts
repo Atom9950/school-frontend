@@ -104,9 +104,10 @@ const options: CreateDataProviderOptions = {
   },
 
   create: {
-    getEndpoint: ({ resource }) => {
+    getEndpoint: ({ resource, meta }) => {
       if (resource === "teachers") return "users";
       if (resource === "students") return "students";
+      if (resource === "attendance" && meta?.url) return meta.url;
       return resource;
     },
     buildBodyParams: async ({ variables, resource }) => {
