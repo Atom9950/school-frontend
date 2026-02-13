@@ -61,18 +61,23 @@ const StudentShow = () => {
     const student = query.data?.data;
     const { isLoading, isError } = query;
 
-    const [departments, setDepartments] = useState<Department[]>([]);
+    const [promotionDepartments, setPromotionDepartments] = useState<Department[]>([]);
+    const [transferDepartments, setTransferDepartments] = useState<Department[]>([]);
     const [selectedDepartment, setSelectedDepartment] = useState<string>("");
     const [isPromoting, setIsPromoting] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [loadingDepartments, setLoadingDepartments] = useState(false);
+    const [loadingPromotionDepartments, setLoadingPromotionDepartments] = useState(false);
+    const [transferDialogOpen, setTransferDialogOpen] = useState(false);
+    const [selectedTransferDepartment, setSelectedTransferDepartment] = useState<string>("");
+    const [isTransferring, setIsTransferring] = useState(false);
+    const [loadingTransferDepartments, setLoadingTransferDepartments] = useState(false);
 
     // Fetch available higher-level departments for promotion
     useEffect(() => {
         if (!student) return;
 
         const fetchAvailablePromotions = async () => {
-            setLoadingDepartments(true);
+            setLoadingPromotionDepartments(true);
             try {
                 const backendUrl =
                     import.meta.env.VITE_BACKEND_BASE_URL || "http://localhost:4000";
@@ -89,12 +94,12 @@ const StudentShow = () => {
                 }
                 const result = await response.json();
                 console.log("Available promotions fetched:", result);
-                setDepartments(result.data || []);
+                setPromotionDepartments(result.data || []);
             } catch (error) {
                 console.error("Failed to fetch available promotions:", error);
-                setDepartments([]);
+                setPromotionDepartments([]);
             } finally {
-                setLoadingDepartments(false);
+                setLoadingPromotionDepartments(false);
             }
         };
 
@@ -103,6 +108,43 @@ const StudentShow = () => {
             fetchAvailablePromotions();
         }
     }, [student, dialogOpen]);
+
+    // Fetch available departments with same level for transfer
+    useEffect(() => {
+        if (!student) return;
+
+        const fetchAvailableTransfers = async () => {
+            setLoadingTransferDepartments(true);
+            try {
+                const backendUrl =
+                    import.meta.env.VITE_BACKEND_BASE_URL || "http://localhost:4000";
+                const baseUrl = backendUrl.endsWith("/")
+                    ? backendUrl.slice(0, -1)
+                    : backendUrl;
+                const url = `${baseUrl}/students/${student.id}/available-transfers`;
+                console.log("Fetching available transfers from:", url);
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(
+                        `Failed to fetch available transfers: ${response.statusText}`,
+                    );
+                }
+                const result = await response.json();
+                console.log("Available transfers fetched:", result);
+                setTransferDepartments(result.data || []);
+            } catch (error) {
+                console.error("Failed to fetch available transfers:", error);
+                setTransferDepartments([]);
+            } finally {
+                setLoadingTransferDepartments(false);
+            }
+        };
+
+        // Only fetch when dialog is opened
+        if (transferDialogOpen) {
+            fetchAvailableTransfers();
+        }
+    }, [student, transferDialogOpen]);
 
     // Handle student promotion
     const handlePromoteStudent = async () => {
@@ -142,6 +184,47 @@ const StudentShow = () => {
             alert("Failed to promote student");
         } finally {
             setIsPromoting(false);
+        }
+    };
+
+    // Handle student transfer between same level departments
+    const handleTransferStudent = async () => {
+        if (!selectedTransferDepartment || !student) return;
+
+        setIsTransferring(true);
+        try {
+            const backendUrl =
+                import.meta.env.VITE_BACKEND_BASE_URL || "http://localhost:4000";
+            const baseUrl = backendUrl.endsWith("/")
+                ? backendUrl.slice(0, -1)
+                : backendUrl;
+            const url = `${baseUrl}/students/${student.id}/transfer`;
+            console.log("Transferring student to:", url);
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ departmentId: Number(selectedTransferDepartment) }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to transfer student: ${response.statusText}`);
+            }
+
+            // Invalidate the student query to refetch updated data
+            invalidate({
+                resource: "students",
+                invalidates: ["list", "detail"],
+                id: student.id,
+            });
+            setTransferDialogOpen(false);
+            setSelectedTransferDepartment("");
+        } catch (error) {
+            console.error("Failed to transfer student:", error);
+            alert("Failed to transfer student");
+        } finally {
+            setIsTransferring(false);
         }
     };
 
@@ -216,25 +299,25 @@ const StudentShow = () => {
                                 <DialogHeader>
                                     <DialogTitle>Promote Student</DialogTitle>
                                     <DialogDescription>
-                                        {loadingDepartments
+                                        {loadingPromotionDepartments
                                             ? "Loading available departments..."
-                                            : departments.length === 0
+                                            : promotionDepartments.length === 0
                                                 ? "No higher-level departments available for promotion"
                                                 : `Select a department to promote ${name} to`}
                                     </DialogDescription>
                                 </DialogHeader>
                                 <div className="space-y-4">
-                                    {departments.length > 0 && (
+                                    {promotionDepartments.length > 0 && (
                                         <Select
                                             value={selectedDepartment}
                                             onValueChange={setSelectedDepartment}
-                                            disabled={loadingDepartments}
+                                            disabled={loadingPromotionDepartments}
                                         >
-                                            <SelectTrigger className="border-primary" disabled={loadingDepartments}>
+                                            <SelectTrigger className="border-primary" disabled={loadingPromotionDepartments}>
                                                 <SelectValue placeholder="Select a department" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {departments.map((dept) => (
+                                                {promotionDepartments.map((dept) => (
                                                     <SelectItem key={dept.id} value={String(dept.id)}>
                                                         {dept.name} 
                                                     </SelectItem>
@@ -242,7 +325,7 @@ const StudentShow = () => {
                                             </SelectContent>
                                         </Select>
                                     )}
-                                    {departments.length === 0 && !loadingDepartments && (
+                                    {promotionDepartments.length === 0 && !loadingPromotionDepartments && (
                                         <div className="rounded-md bg-muted p-3 text-sm text-muted-foreground">
                                             This student has already been promoted to the highest
                                             available level.
@@ -260,11 +343,74 @@ const StudentShow = () => {
                                             disabled={
                                                 !selectedDepartment ||
                                                 isPromoting ||
-                                                loadingDepartments ||
-                                                departments.length === 0
+                                                loadingPromotionDepartments ||
+                                                promotionDepartments.length === 0
                                             }
                                         >
                                             {isPromoting ? "Promoting..." : "Promote"}
+                                        </Button>
+                                    </div>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                        <Dialog open={transferDialogOpen} onOpenChange={setTransferDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                    Transfer
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Transfer Student</DialogTitle>
+                                    <DialogDescription>
+                                        {loadingTransferDepartments
+                                            ? "Loading available departments..."
+                                            : transferDepartments.length === 0
+                                                ? "No other departments available at the same level"
+                                                : `Select a department to transfer ${name} to`}
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                    {transferDepartments.length > 0 && (
+                                        <Select
+                                            value={selectedTransferDepartment}
+                                            onValueChange={setSelectedTransferDepartment}
+                                            disabled={loadingTransferDepartments}
+                                        >
+                                            <SelectTrigger className="border-primary" disabled={loadingTransferDepartments}>
+                                                <SelectValue placeholder="Select a department" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {transferDepartments.map((dept) => (
+                                                    <SelectItem key={dept.id} value={String(dept.id)}>
+                                                        {dept.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    )}
+                                    {transferDepartments.length === 0 && !loadingTransferDepartments && (
+                                        <div className="rounded-md bg-muted p-3 text-sm text-muted-foreground">
+                                            No other departments available at the same level for transfer.
+                                        </div>
+                                    )}
+                                    <div className="flex justify-end gap-2">
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setTransferDialogOpen(false)}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            onClick={handleTransferStudent}
+                                            disabled={
+                                                !selectedTransferDepartment ||
+                                                isTransferring ||
+                                                loadingTransferDepartments ||
+                                                transferDepartments.length === 0
+                                            }
+                                        >
+                                            {isTransferring ? "Transferring..." : "Transfer"}
                                         </Button>
                                     </div>
                                 </div>
