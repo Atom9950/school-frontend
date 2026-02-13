@@ -83,7 +83,7 @@ const StudentEdit = () => {
                 name: student.name,
                 email: student.email || '',
                 age: student.age,
-                gender: student.gender,
+                gender: (student.gender as "male" | "female" | "other") || "male",
                 address: student.address || '',
                 phoneNumber: student.phoneNumber || '',
                 bio: student.whatsappNumber || '',
