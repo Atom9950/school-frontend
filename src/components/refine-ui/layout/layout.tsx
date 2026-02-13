@@ -6,14 +6,19 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import type { PropsWithChildren } from "react";
 import { Sidebar } from "./sidebar";
+import { GuestBanner } from "@/components/guest-banner";
+import { isGuestMode } from "@/lib/guest-mode";
 
 export function Layout({ children }: PropsWithChildren) {
+  const guestMode = isGuestMode();
+
   return (
     <ThemeProvider>
       <SidebarProvider>
         <Sidebar />
         <SidebarInset>
           <Header />
+          {guestMode && <GuestBanner />}
           <main
             className={cn(
               "@container/main",

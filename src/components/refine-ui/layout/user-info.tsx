@@ -2,6 +2,7 @@ import { UserAvatar } from "@/components/refine-ui/layout/user-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useGetIdentity } from "@refinedev/core";
+import { isGuestMode } from "@/lib/guest-mode";
 
 type User = {
   id: number;
@@ -14,6 +15,35 @@ type User = {
 
 export function UserInfo() {
   const { data: user, isLoading: userIsLoading } = useGetIdentity<User>();
+  const guestMode = isGuestMode();
+
+  if (guestMode) {
+    return (
+      <div className={cn("flex", "items-center", "gap-x-2")}>
+        <div
+          className={cn(
+            "h-10 w-10 rounded-full bg-amber-200 flex items-center justify-center text-sm font-bold text-amber-900"
+          )}
+        >
+          G
+        </div>
+        <div
+          className={cn(
+            "flex",
+            "flex-col",
+            "justify-between",
+            "h-10",
+            "text-left"
+          )}
+        >
+          <span className={cn("text-sm", "font-medium", "text-muted-foreground")}>
+            Guest User
+          </span>
+          <span className={cn("text-xs", "text-amber-600")}>Limited access</span>
+        </div>
+      </div>
+    );
+  }
 
   if (userIsLoading || !user) {
     return (

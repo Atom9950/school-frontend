@@ -22,6 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useLink, useNotification, useRefineOptions } from "@refinedev/core";
 import { signIn } from "@/lib/auth-client";
+import { enableGuestMode } from "@/lib/guest-mode";
 
 export const SignInForm = () => {
   const [rememberMe, setRememberMe] = useState(false);
@@ -192,6 +193,25 @@ const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
 
             <Button type="submit" size="lg" className={cn("w-full", "mt-6")} disabled={isLoading}>
               {isLoading ? "Signing in..." : "Sign in"}
+            </Button>
+
+            <div className={cn("flex", "items-center", "gap-4", "mt-6")}>
+              <Separator className={cn("flex-1")} />
+              <span className={cn("text-sm", "text-muted-foreground")}>or</span>
+              <Separator className={cn("flex-1")} />
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className={cn("w-full", "mt-6")}
+              onClick={() => {
+                enableGuestMode();
+                window.location.href = "/";
+              }}
+            >
+              Continue as Guest
             </Button>
 
             {/* <div className={cn("flex", "items-center", "gap-4", "mt-6")}>

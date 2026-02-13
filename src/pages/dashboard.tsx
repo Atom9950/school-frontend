@@ -10,6 +10,7 @@ import { Link } from "react-router";
 import { AdvancedImage } from "@cloudinary/react";
 import { bannerPhoto } from "@/lib/cloudinary";
 import { BACKEND_BASE_URL } from "@/constants";
+import { isGuestMode, MOCK_DATA } from "@/lib/guest-mode";
 
 const Dashboard = () => {
     const [stats, setStats] = useState({
@@ -55,6 +56,23 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
+                // Use mock data if in guest mode
+                if (isGuestMode()) {
+                    const allClasses = MOCK_DATA.classes;
+                    const activeCount = allClasses.filter(
+                        (c) => c.status === "active",
+                    ).length;
+
+                    setStats({
+                        totalClasses: allClasses.length,
+                        activeClasses: activeCount,
+                        totalSubjects: MOCK_DATA.subjects.length,
+                        totalTeachers: MOCK_DATA.teachers.length,
+                        totalStudents: MOCK_DATA.students.length,
+                    });
+                    return;
+                }
+
                 const baseUrl = BACKEND_BASE_URL.endsWith("/")
                     ? BACKEND_BASE_URL.slice(0, -1)
                     : BACKEND_BASE_URL;

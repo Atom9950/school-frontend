@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "@refinedev/react-hook-form";
 import { classSchema } from "@/lib/schema";
 import * as z from "zod";
+import { GuestActionGuard } from "@/components/guest-action-guard";
 import {
   Form,
   FormControl,
@@ -214,8 +215,9 @@ const Create = () => {
   ]);
 
   return (
-    <CreateView className="class-view">
-      <Breadcrumb />
+    <GuestActionGuard action={isEditMode ? "edit" : "create"}>
+      <CreateView className="class-view">
+        <Breadcrumb />
 
       <h1 className="page-title">
         {isEditMode ? "Edit Class" : "Create a Class"}
@@ -504,8 +506,9 @@ const Create = () => {
           </CardContent>
         </Card>
       </div>
-    </CreateView>
-  );
-};
+      </CreateView>
+      </GuestActionGuard>
+      );
+      };
 
 export default Create;

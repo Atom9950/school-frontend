@@ -1,8 +1,10 @@
 import { Navigate } from "react-router";
 import { useAuth } from "@/lib/use-auth";
+import { isGuestMode } from "@/lib/guest-mode";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, isLoading, error } = useAuth();
+  const guestMode = isGuestMode();
 
   if (isLoading) {
     return (
@@ -15,7 +17,11 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!session || error) {
+  if (!session && !guestMode && error) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!session && !guestMode) {
     return <Navigate to="/login" replace />;
   }
 

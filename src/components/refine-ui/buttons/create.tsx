@@ -1,9 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { type BaseKey, useCreateButton } from "@refinedev/core";
+import { type BaseKey, useCreateButton, useNotification } from "@refinedev/core";
 import { Plus } from "lucide-react";
 import React from "react";
+import { useGuestMode } from "@/lib/use-guest-mode";
+import { disableGuestMode } from "@/lib/guest-mode";
+import { useNavigate } from "react-router";
 
 type CreateButtonProps = {
   /**
@@ -34,27 +37,40 @@ export const CreateButton = React.forwardRef<
     accessControl,
     meta,
   });
+  const { isGuest } = useGuestMode();
+  const { open } = useNotification();
+  const navigate = useNavigate();
 
-  const isDisabled = disabled || rest.disabled;
+  const isDisabled = disabled || rest.disabled || isGuest;
   const isHidden = hidden || rest.hidden;
 
   if (isHidden) return null;
+
+  const handleClick = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (isDisabled && isGuest) {
+      e.preventDefault();
+      open?.({
+        type: "error",
+        message: "Guest users cannot create items. Please sign up to get full access.",
+      });
+      return;
+    }
+    if (isDisabled) {
+      e.preventDefault();
+      return;
+    }
+    if (onClick) {
+      e.preventDefault();
+      onClick(e);
+    }
+  };
 
   return (
     <Button {...rest} ref={ref} disabled={isDisabled} asChild>
       <LinkComponent
         to={to}
         replace={false}
-        onClick={(e: React.PointerEvent<HTMLButtonElement>) => {
-          if (isDisabled) {
-            e.preventDefault();
-            return;
-          }
-          if (onClick) {
-            e.preventDefault();
-            onClick(e);
-          }
-        }}
+        onClick={handleClick}
       >
         {children ?? (
           <div className="flex items-center gap-2 font-semibold">

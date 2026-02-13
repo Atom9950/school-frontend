@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import { GuestActionGuard } from "@/components/guest-action-guard";
 import {
   Select,
   SelectContent,
@@ -175,8 +176,9 @@ const AttendanceCreate = () => {
   };
 
   return (
-    <CreateView className="attendance-view">
-      <Breadcrumb />
+    <GuestActionGuard action="create">
+      <CreateView className="attendance-view">
+        <Breadcrumb />
 
       <h1 className="page-title">Mark Attendance</h1>
       <div className="intro-row">
@@ -395,8 +397,9 @@ const AttendanceCreate = () => {
           </CardContent>
         </Card>
       </div>
-    </CreateView>
-  );
-};
+      </CreateView>
+      </GuestActionGuard>
+      );
+      };
 
 export default AttendanceCreate;
