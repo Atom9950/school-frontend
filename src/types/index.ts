@@ -127,6 +127,7 @@ export type ClassDetails = {
     department?: Department;
     schedules: Schedule[];
     inviteCode?: string;
+    totalStudents?: number;
 };
 
 export type SignUpPayload = {

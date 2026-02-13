@@ -34,7 +34,7 @@ const show = () => {
     const placeholderUrl = `https://placehold.co/600x400?text=${encodeURIComponent(teacherInitials || "NA")}`;
   const subjectName = classDetails.subject?.name || 'N/A';
 
-  const { id, name, description, status, capacity, courseCode, courseName, bannerUrl, bannerCldPubId, subject, teacher, department, schedules, inviteCode} = classDetails;
+  const { id, name, description, status, capacity, courseCode, courseName, bannerUrl, bannerCldPubId, subject, teacher, department, schedules, inviteCode, totalStudents} = classDetails;
   return (
     <ShowView className='class-view class-show'>
       <ShowViewHeader resource='classes' title='Class Details'/>
@@ -54,6 +54,7 @@ const show = () => {
 
           <div><Badge variant='outline'>{capacity} spots</Badge>
                <Badge variant={status == 'active' ? 'default' : 'secondary'}>{status.toUpperCase()}</Badge>
+               <Badge variant='outline'>{totalStudents ?? 0} students</Badge>
           </div>
         </div>
 
@@ -95,16 +96,25 @@ const show = () => {
 
         <Separator/>
 
-        <div className='join'>
-          <h2>Join Class</h2>
-          <ol>
-            <li>Ask your teacher for the invite code</li>
-            <li>Click the "Join Class" button</li>
-            <li>Paste the code and click "Join"</li>
-          </ol>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
+          alignItems: 'flex-start'
+        }}>
+          <p style={{
+            fontSize: '0.75rem',
+            fontWeight: 'bold',
+            color: '#888',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em'
+          }}>Total Allocated Students</p>
+          <p style={{
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            color: '#7c9082'
+          }}>{totalStudents ?? 0}</p>
         </div>
-
-        <Button size='lg' className='w-full'>Join Class</Button>
       </Card>
     </ShowView>
   )
