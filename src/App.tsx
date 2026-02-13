@@ -29,6 +29,7 @@ import TeacherCreate from "./pages/teachers/create";
 import StudentsList from "./pages/students/list";
 import StudentCreate from "./pages/students/create";
 import StudentShow from "./pages/students/show";
+import StudentEdit from "./pages/students/edit";
 import { ProtectedRoute } from "./components/protected-route";
 import { SignInForm } from "./components/refine-ui/form/sign-in-form";
 import Settings from "./pages/settings";
@@ -99,6 +100,7 @@ function App() {
                     name: 'students',
                     list: '/students',
                     create: '/students/create',
+                    edit: '/students/edit/:id',
                     show: '/students/show/:id',
                     meta: { label: 'Students', icon: <Users /> }
                   },
@@ -146,6 +148,7 @@ function App() {
                   <Route path="students">
                     <Route index element={<StudentsList />} />
                     <Route path="create" element={<StudentCreate />} />
+                    <Route path="edit/:id" element={<StudentEdit />} />
                     <Route path="show/:id" element={<StudentShow />} />
                   </Route>
                   <Route path="settings" element={<Settings />} />

@@ -157,6 +157,45 @@ const options: CreateDataProviderOptions = {
       return json.data ?? [];
     },
   },
+
+  update: {
+    getEndpoint: ({ resource, id }) => {
+      const endpoint = resource === "teachers" ? "users" : resource;
+      return `${endpoint}/${id}`;
+    },
+    buildBodyParams: async ({ variables, resource }) => {
+      // Map bannerUrl to image for teachers/users resource
+      if (
+        (resource === "users" || resource === "teachers") &&
+        "bannerUrl" in variables
+      ) {
+        const {
+          bannerUrl,
+          bannerCldPubId,
+          address,
+          age,
+          gender,
+          joiningDate,
+          allocatedClasses,
+          allocatedDepartments,
+          ...rest
+        } = variables;
+        return {
+          ...rest,
+          image: bannerUrl,
+          imageCldPubId: bannerCldPubId,
+        };
+      }
+      return variables;
+    },
+    mapResponse: async (response) => {
+      if (!response.ok) {
+        throw await buildHttpError(response);
+      }
+      const json: CreateResponse = await response.json();
+      return json.data ?? [];
+    },
+  },
 };
 
 const { dataProvider } = createDataProvider(BACKEND_BASE_URL, options);
