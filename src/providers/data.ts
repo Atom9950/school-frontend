@@ -82,6 +82,27 @@ const options: CreateDataProviderOptions = {
             params.gender = value;
           }
         }
+
+        if (resource === "attendance") {
+          if (field === "classId") {
+            params.classId = value;
+          }
+          if (field === "status") {
+            params.status = value;
+          }
+          if (field === "date") {
+            params.date = value;
+          }
+          if (field === "class.department.id") {
+            params.departmentId = value;
+          }
+          if (field === "student.name") {
+            params.search = value;
+          }
+          if (field === "student.rollNumber") {
+            params.rollNumber = value;
+          }
+        }
       });
 
       return params;
