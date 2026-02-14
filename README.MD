@@ -3,14 +3,13 @@
 <div align="center">
 
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://school-frontend-flax-nine.vercel.app)
-[![Backend Repo](https://img.shields.io/badge/demo-live-brightgreen)](https://github.com/Atom9950/school-backend)
 [![Frontend](https://img.shields.io/badge/Frontend-React-blue)](https://github.com/Atom9950/school-frontend)
 [![Backend](https://img.shields.io/badge/Backend-Node.js-green)](https://github.com/Atom9950/school-backend)
 [![License](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
 
 A comprehensive, enterprise-grade School Management System built with modern web technologies to streamline administrative operations, student management, and academic tracking.
 
-[Live Demo](https://school-frontend-flax-nine.vercel.app) · [Report Bug](https://github.com/Atom9950/school-frontend/issues) · [Request Feature](https://github.com/Atom9950/school-frontend/issues)
+[Live Demo](https://school-frontend-flax-nine.vercel.app) · [Backend Repo](https://github.com/Atom9950/school-backend) · [Report Bug](https://github.com/Atom9950/school-frontend/issues) · [Request Feature](https://github.com/Atom9950/school-frontend/issues)
 
 </div>
 
