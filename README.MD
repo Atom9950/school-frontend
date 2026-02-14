@@ -1078,7 +1078,7 @@ We welcome contributions! Please follow these steps:
 
 ## 📞 Support
 
-For support, email [sdroy001@gmail.com] or connect me on LinkdIn].
+For support, email sdroy001@gmail.com or connect me on LinkdIn.
 
 ---
 
