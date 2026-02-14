@@ -2,8 +2,6 @@
 
 <div align="center">
 
-![School Management System Banner]("C:\Users\User\OneDrive\Pictures\Screenshots\Screenshot 2026-02-14 125357.png")
-
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://school-frontend-flax-nine.vercel.app)
 [![Frontend](https://img.shields.io/badge/Frontend-React-blue)](https://github.com/Atom9950/school-frontend)
 [![Backend](https://img.shields.io/badge/Backend-Node.js-green)](https://github.com/Atom9950/school-backend)
@@ -43,12 +41,6 @@ A comprehensive, enterprise-grade School Management System built with modern web
 
 ## 🌟 Overview
 
-<div align="center">
-
-![Overview Banner](./assets/images/overview-banner.png)
-
-</div>
-
 The School Management System is a robust, full-stack web application designed to digitize and automate the complex administrative processes within educational institutions. This system provides a centralized platform for managing departments, subjects, classes, teachers, students, and attendance tracking with an intuitive admin dashboard.
 
 Built with scalability and performance in mind, the system leverages the PERN stack (PostgreSQL, Express, React, Node.js) combined with modern UI frameworks and security best practices to deliver a seamless user experience.
@@ -67,12 +59,6 @@ Built with scalability and performance in mind, the system leverages the PERN st
 ## ✨ Features
 
 ### 1. 🏢 Department Management
-
-<div align="center">
-
-![Department Management Banner](./assets/images/department-banner.png)
-
-</div>
 
 The Department Management module serves as the organizational foundation of the school structure, allowing administrators to create, manage, and maintain academic departments.
 
@@ -109,21 +95,9 @@ The Department Management module serves as the organizational foundation of the 
   - Define department policies and procedures
   - Manage department contact information and locations
 
-<div align="center">
-
-![Department Dashboard Screenshot](./assets/screenshots/department-dashboard.png)
-
-</div>
-
 ---
 
 ### 2. 📚 Subject Management
-
-<div align="center">
-
-![Subject Management Banner](./assets/images/subject-banner.png)
-
-</div>
 
 The Subject Management dashboard provides comprehensive tools for creating, organizing, and maintaining the academic curriculum across all departments.
 
@@ -169,21 +143,9 @@ The Subject Management dashboard provides comprehensive tools for creating, orga
   - Set classroom specifications
   - Manage digital resources and e-learning materials
 
-<div align="center">
-
-![Subject Dashboard Screenshot](./assets/screenshots/subject-dashboard.png)
-
-</div>
-
 ---
 
 ### 3. 🎓 Class Management
-
-<div align="center">
-
-![Class Management Banner](./assets/images/class-banner.png)
-
-</div>
 
 The Class Management module handles the complex task of creating class sections and allocating them to departments based on subjects, ensuring optimal resource utilization.
 
@@ -238,21 +200,9 @@ The Class Management module handles the complex task of creating class sections 
   - Remedial and supplementary classes
   - Special activity classes
 
-<div align="center">
-
-![Class Dashboard Screenshot](./assets/screenshots/class-dashboard.png)
-
-</div>
-
 ---
 
 ### 4. 👨‍🏫 Teacher Management
-
-<div align="center">
-
-![Teacher Management Banner](./assets/images/teacher-banner.png)
-
-</div>
 
 The Teacher Management dashboard provides comprehensive tools for managing faculty information, assignments, and professional development tracking.
 
@@ -321,21 +271,9 @@ The Teacher Management dashboard provides comprehensive tools for managing facul
   - Send notifications and announcements
   - Generate mailing lists
 
-<div align="center">
-
-![Teacher Dashboard Screenshot](./assets/screenshots/teacher-dashboard.png)
-
-</div>
-
 ---
 
 ### 5. 👨‍🎓 Student Management
-
-<div align="center">
-
-![Student Management Banner](./assets/images/student-banner.png)
-
-</div>
 
 The Student Management system is the heart of the application, offering extensive functionality for managing student lifecycles from admission to graduation.
 
@@ -443,21 +381,9 @@ The Student Management system is the heart of the application, offering extensiv
   - Record disciplinary actions
   - Manage student feedback and grievances
 
-<div align="center">
-
-![Student Dashboard Screenshot](./assets/screenshots/student-dashboard.png)
-
-</div>
-
 ---
 
 ### 6. 📊 Attendance Management
-
-<div align="center">
-
-![Attendance Management Banner](./assets/images/attendance-banner.png)
-
-</div>
 
 The Attendance Management system provides robust tools for tracking, monitoring, and analyzing student attendance with multiple views and reporting capabilities.
 
@@ -558,21 +484,9 @@ The Attendance Management system provides robust tools for tracking, monitoring,
   - Automated backup scheduling
   - Historical data archival
 
-<div align="center">
-
-![Attendance Dashboard Screenshot](./assets/screenshots/attendance-dashboard.png)
-
-</div>
-
 ---
 
 ## 🛠 Tech Stack
-
-<div align="center">
-
-![Tech Stack Banner](./assets/images/tech-stack-banner.png)
-
-</div>
 
 ### Frontend Technologies
 
@@ -615,12 +529,6 @@ The Attendance Management system provides robust tools for tracking, monitoring,
 ---
 
 ## 🏗 Architecture
-
-<div align="center">
-
-![Architecture Banner](./assets/images/architecture-banner.png)
-
-</div>
 
 ### System Architecture
 
@@ -701,12 +609,6 @@ The Attendance Management system provides robust tools for tracking, monitoring,
 ---
 
 ## 🚀 Getting Started
-
-<div align="center">
-
-![Getting Started Banner](./assets/images/getting-started-banner.png)
-
-</div>
 
 ### Prerequisites
 
@@ -906,12 +808,6 @@ const aj = arcjet({
 
 ## 💻 Usage
 
-<div align="center">
-
-![Usage Banner](./assets/images/usage-banner.png)
-
-</div>
-
 ### Accessing the Admin Dashboard
 
 1. Navigate to `https://school-frontend-flax-nine.vercel.app` (or your local URL)
@@ -964,12 +860,6 @@ Dashboard → Attendance → Mark Attendance
 ---
 
 ## 📚 API Documentation
-
-<div align="center">
-
-![API Documentation Banner](./assets/images/api-banner.png)
-
-</div>
 
 ### Base URL
 ```
@@ -1068,12 +958,6 @@ curl -X POST http://localhost:5000/api/students \
 
 ## 🔒 Security
 
-<div align="center">
-
-![Security Banner](./assets/images/security-banner.png)
-
-</div>
-
 ### Security Features
 
 1. **Arcjet Integration**
@@ -1112,12 +996,6 @@ curl -X POST http://localhost:5000/api/students \
 
 ## 📈 Monitoring
 
-<div align="center">
-
-![Monitoring Banner](./assets/images/monitoring-banner.png)
-
-</div>
-
 ### Site24x7 Integration
 
 The application is monitored using Site24x7 for:
@@ -1154,12 +1032,6 @@ Access real-time metrics:
 ---
 
 ## 🤝 Contributing
-
-<div align="center">
-
-![Contributing Banner](./assets/images/contributing-banner.png)
-
-</div>
 
 We welcome contributions! Please follow these steps:
 
@@ -1220,10 +1092,6 @@ For support, email sdroy001@gmail.com or connect me on LinkdIn.
 
 <div align="center">
 
-![Footer Banner](./assets/images/footer-banner.png)
-
 **[⬆ Back to Top](#-school-management-system)**
-
-Made with ❤️ by the School Management System Team
 
 </div>
