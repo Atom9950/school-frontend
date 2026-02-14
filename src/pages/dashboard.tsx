@@ -249,6 +249,12 @@ const Dashboard = () => {
                         <span className="text-sm font-medium group-hover:text-primary transition-colors">Create Department</span>
                     </Link>
 
+                     {/* Create Attendance */}
+                    <Link to="/attendance/create" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Plus className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">Create Attendance</span>
+                    </Link>
+
                     {/* Add Subject */}
                     <Link to="/subjects/create" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
                         <Plus className="w-4 h-4 text-primary" />
@@ -297,11 +303,17 @@ const Dashboard = () => {
                         <span className="text-sm font-medium group-hover:text-primary transition-colors">View Students</span>
                     </Link>
 
+                     {/* View Attendance */}
+                    <Link to="/attendance" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                        <Eye className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium group-hover:text-primary transition-colors">View Attendance</span>
+                    </Link>
+
                     {/* Settings */}
-                    {/* <Link to="/settings" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
+                    <Link to="/settings" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/20 hover:bg-primary/5 hover:border-primary transition-all group">
                         <Settings className="w-4 h-4 text-primary" />
                         <span className="text-sm font-medium group-hover:text-primary transition-colors">Settings</span>
-                    </Link> */}
+                    </Link>
                 </div>
             </div>
 
