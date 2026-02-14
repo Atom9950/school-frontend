@@ -81,6 +81,9 @@ const options: CreateDataProviderOptions = {
           if (field === "gender") {
             params.gender = value;
           }
+          if (field === "rollNumber" && resource === "students") {
+            params.rollNumber = value;
+          }
         }
 
         if (resource === "attendance") {

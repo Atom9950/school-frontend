@@ -21,6 +21,8 @@ const StudentsList = () => {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
   const [selectedDepartment, setSelectedDepartment] = useState('all')
   const [selectedGender, setSelectedGender] = useState('all')
+  const [rollNumberQuery, setRollNumberQuery] = useState("")
+  const [debouncedRollNumberQuery, setDebouncedRollNumberQuery] = useState("")
 
   const { query: departmentsQuery } = useList<any>({
     resource: 'departments',
@@ -38,6 +40,14 @@ const StudentsList = () => {
     return () => clearTimeout(timer)
   }, [searchQuery])
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedRollNumberQuery(rollNumberQuery)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [rollNumberQuery])
+
 
 
   const departmentFilters = selectedDepartment === 'all' ? [] : [
@@ -51,6 +61,13 @@ const StudentsList = () => {
       field: 'name',
       operator: 'contains' as const,
       value: debouncedSearchQuery
+    }
+  ] : [];
+  const rollNumberFilters = debouncedRollNumberQuery ? [
+    {
+      field: 'rollNumber',
+      operator: 'contains' as const,
+      value: debouncedRollNumberQuery
     }
   ] : [];
   
@@ -154,7 +171,7 @@ const StudentsList = () => {
        mode: 'server',
      },
      filters: {
-       permanent: [...departmentFilters, ...genderFilters, ...searchFilters],
+       permanent: [...departmentFilters, ...genderFilters, ...searchFilters, ...rollNumberFilters],
      },
      sorters: {
        initial: [
@@ -188,7 +205,39 @@ const StudentsList = () => {
             />
           </div>
 
-          <div className='flex flex-wrap gap-2 w-full sm:w-auto'>
+          <div className='search-field'>
+            <Search className='search-icon'/>
+
+            <Input 
+              type='text'
+              placeholder='Search by roll number'
+              className='pl-10 w-full'
+              value={rollNumberQuery}
+              onChange={(e) => setRollNumberQuery(e.target.value)}
+            />
+          </div>
+
+          <Select
+            value={selectedGender}
+            onValueChange={setSelectedGender}
+          >
+            <SelectTrigger className='w-[180px] !border-primary'>
+              <SelectValue placeholder='Filter by gender' />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value='all'>
+                All Genders
+              </SelectItem>
+              {genders.map(gender => (
+                <SelectItem key={gender} value={gender}>
+                  {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <div className='flex flex-wrap gap-2 w-full sm:w-auto items-end'>
             <Select
               value={selectedDepartment}
               onValueChange={setSelectedDepartment}
@@ -204,26 +253,6 @@ const StudentsList = () => {
                 {departments.map(dept => (
                   <SelectItem key={dept.id} value={dept.name}>
                     {dept.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={selectedGender}
-              onValueChange={setSelectedGender}
-            >
-              <SelectTrigger className='w-[180px] !border-primary'>
-                <SelectValue placeholder='Filter by gender' />
-              </SelectTrigger>
-
-              <SelectContent>
-                <SelectItem value='all'>
-                  All Genders
-                </SelectItem>
-                {genders.map(gender => (
-                  <SelectItem key={gender} value={gender}>
-                    {gender.charAt(0).toUpperCase() + gender.slice(1)}
                   </SelectItem>
                 ))}
               </SelectContent>
