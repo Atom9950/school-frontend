@@ -1066,12 +1066,6 @@ We welcome contributions! Please follow these steps:
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
 ## 🙏 Acknowledgments
 
 - Built with [Refine](https://refine.dev/) - React Framework for enterprise applications
@@ -1084,29 +1078,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, email [your-email@example.com] or join our community on [Discord/Slack].
-
----
-
-## 🗺️ Roadmap
-
-### Upcoming Features
-
-- [ ] Mobile application (React Native)
-- [ ] Parent portal for attendance tracking
-- [ ] Automated report card generation
-- [ ] SMS/Email notifications
-- [ ] Exam management module
-- [ ] Library management integration
-- [ ] Fee management system
-- [ ] Transport management
-- [ ] Hostel management
-- [ ] Online examination system
-- [ ] AI-powered analytics
-- [ ] Multi-language support
-- [ ] Biometric attendance integration
-- [ ] Video conferencing integration
-- [ ] Digital certificate generation
+For support, email [sdroy001@gmail.com] or connect me on LinkdIn].
 
 ---
 
@@ -1121,7 +1093,5 @@ For support, email [your-email@example.com] or join our community on [Discord/Sl
 <div align="center">
 
 **[⬆ Back to Top](#-school-management-system)**
-
-Made with ❤️ by the Development Team
 
 </div>
