@@ -85,22 +85,22 @@ export function createGuestAwareDataProvider(baseProvider: DataProvider): DataPr
       }
     },
 
-    create: async () => {
+    create: async (params: any) => {
       if (isGuestMode()) {
         throw new Error(
           "Guest users cannot create items. Please sign up to get full access."
         );
       }
-      return Promise.resolve({ data: {} } as any);
+      return baseProvider.create!(params);
     },
 
-    update: async () => {
+    update: async (params: any) => {
       if (isGuestMode()) {
         throw new Error(
           "Guest users cannot edit items. Please sign up to get full access."
         );
       }
-      return Promise.resolve({ data: {} } as any);
+      return baseProvider.update!(params);
     },
   };
 }
