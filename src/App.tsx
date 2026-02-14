@@ -37,6 +37,7 @@ import AttendanceShow from "./pages/attendance/show";
 import { ProtectedRoute } from "./components/protected-route";
 import { SignInForm } from "./components/refine-ui/form/sign-in-form";
 import Settings from "./pages/settings";
+import { customTitleHandler } from "./utils/customTitleHandler";
 
 
 function App() {
@@ -173,8 +174,8 @@ function App() {
               <Toaster />
               <RefineKbar />
               <UnsavedChangesNotifier />
-              <DocumentTitleHandler />
-            </Refine>
+              <DocumentTitleHandler handler={customTitleHandler} />
+              </Refine>
             <DevtoolsPanel />
           </DevtoolsProvider>
         </ThemeProvider>
