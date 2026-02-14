@@ -211,15 +211,12 @@ const SubjectCreate = () => {
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
-                          value={field.value || ""}
+                          value={field.value}
                           disabled={departmentsLoading}
                         >
                           <FormControl className="border-2 border-primary rounded-md p-2">
                             <SelectTrigger className="w-full">
-                              <SelectValue
-                                placeholder="Select a department"
-                                defaultValue={field.value}
-                              />
+                              <SelectValue placeholder="Select a department" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
